@@ -6,3 +6,4 @@ dist
 *.tsbuildinfo
 apps/api/dist
 packages/shared/dist
+screens/
