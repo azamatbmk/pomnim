@@ -1,0 +1,38 @@
+{
+  "name": "@pomnim/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@nestjs/common": "*",
+    "@nestjs/config": "*",
+    "@nestjs/core": "*",
+    "@nestjs/jwt": "*",
+    "@nestjs/platform-express": "*",
+    "@pomnim/shared": "*",
+    "@prisma/client": "^6.19.3",
+    "bcrypt": "*",
+    "class-transformer": "*",
+    "class-validator": "*",
+    "cookie-parser": "*",
+    "dotenv": "*",
+    "reflect-metadata": "*",
+    "rxjs": "*"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "*",
+    "@nestjs/schematics": "*",
+    "@types/bcrypt": "*",
+    "@types/cookie-parser": "*",
+    "@types/express": "*",
+    "@types/node": "*",
+    "prisma": "^6.19.3",
+    "typescript": "6.0.2"
+  }
+}

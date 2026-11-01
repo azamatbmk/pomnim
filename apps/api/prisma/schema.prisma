@@ -1,0 +1,25 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Owner {
+  id           String   @id @default(cuid())
+  login        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Worker {
+  id         String    @id @default(cuid())
+  name       String
+  phone      String    @unique
+  area       String
+  disabledAt DateTime?
+  createdAt  DateTime  @default(now())
+}

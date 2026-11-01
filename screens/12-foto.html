@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#344b3d">
+  <title>Помним — снимки</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23344b3d'/%3E%3Cpath d='M19 45V28a13 13 0 0 1 26 0v17M27 45V30a5 5 0 0 1 10 0v15' fill='none' stroke='%23eee9db' stroke-width='3'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f7f2;
+      --paper: #fff;
+      --ink: #283a32;
+      --muted: #737d75;
+      --green: #344f40;
+      --line: #e2e6dd;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e7eee4; color: var(--ink); font-family: Arial, "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.55; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    button, a, textarea { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 3px solid #b38454; outline-offset: 3px; }
+    .stage { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 28px 16px; }
+    .stage-label { margin: 0; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: #77856d; }
+    .phone { width: 390px; height: 844px; max-height: calc(100dvh - 88px); background: var(--bg); border: 1px solid var(--line); border-radius: 36px; box-shadow: 0 20px 80px #102f2433; overflow: hidden; display: flex; flex-direction: column; }
+    .top { display: flex; align-items: center; justify-content: space-between; padding: 26px 22px 0; }
+    .brand { display: flex; gap: 10px; align-items: center; font-family: Georgia, "Times New Roman", serif; font-size: 26px; letter-spacing: -1.2px; line-height: 1; }
+    .brand-symbol { width: 24px; height: 28px; border: 2px solid #5b715e; border-bottom: 0; border-radius: 16px 16px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .brand-symbol svg { display: block; width: 6px; height: 18px; }
+    .who { text-align: right; }
+    .who strong { display: block; font-family: Georgia, "Times New Roman", serif; font-size: 16px; font-weight: 400; }
+    .who span { font-size: 10px; color: #637b55; }
+    .screen { flex: 1; min-height: 0; overflow: auto; padding: 18px 22px 12px; scrollbar-width: none; }
+    .screen::-webkit-scrollbar { display: none; }
+    h1 { margin: 0 0 14px; font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; letter-spacing: -0.7px; line-height: 1.15; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .card h2 { margin: 0 0 4px; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 400; line-height: 1.25; }
+    .meta { margin: 0; font-size: 12px; line-height: 1.55; color: #8b9482; }
+    .card p { margin: 10px 0 0; font-size: 13px; line-height: 1.6; }
+    .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .shot {
+      min-height: 120px;
+      border: 1px dashed #c5d0b5;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--green);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .shot.set { border-style: solid; border-color: #859c78; background: #eef2e7; }
+    .shot svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    label { display: block; margin: 16px 0 6px; font-size: 12px; font-weight: 500; }
+    textarea { width: 100%; padding: 12px; border: 1px solid #dce2d4; border-radius: 8px; background: #fff; color: var(--ink); font-size: 16px; min-height: 88px; resize: vertical; }
+    textarea:focus { border-color: #859c78; outline: none; }
+    .help { margin: 8px 0 0; font-size: 12px; line-height: 1.55; color: #8b9482; }
+    .back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--green); font-size: 12px; }
+    .back svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .grave-photo { height: 92px; margin-bottom: 12px; border-radius: 12px; background: #f1e9dd; display: grid; place-items: center; }
+    .arch { width: 22px; height: 26px; border: 2px solid #b08968; border-bottom: 0; border-radius: 14px 14px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .arch i { display: block; width: 12px; height: 16px; border: 2px solid #c4b09a; border-bottom: 0; border-radius: 10px 10px 0 0; }
+    .photo-label { margin: -4px 0 10px; font-size: 11px; color: var(--muted); }
+    .remark { margin: 0 0 14px; padding: 12px 14px; border: 1px solid #e5dfcd; background: #f5f2e9; color: #82765b; border-radius: 12px; font-size: 13px; line-height: 1.55; }
+    #remark[hidden] { display: none; }
+    .dock { padding: 12px 22px 18px; background: #fafbf7; border-top: 1px solid var(--line); }
+    .btn { width: 100%; border: 0; border-radius: 8px; padding: 13px 18px; background: var(--green); color: #fff; font-size: 13px; font-weight: 500; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    @media (max-width: 480px) {
+      body { background: var(--bg); }
+      .stage { padding: 0; gap: 0; }
+      .stage-label { display: none; }
+      .phone { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="stage-label">Экран 12 · Снимки</p>
+    <div class="phone">
+      <div class="top">
+        <div class="brand">
+          <span class="brand-symbol" aria-hidden="true"><svg viewBox="10 7.6 7.4 24.6"><path d="M13.6 7.8C15.1 9.5 16.5 11.8 16.9 13.6 17.25 15 16.8 16.1 15.9 16.5 15.2 16.8 14.6 16.55 14.2 16.15 13.85 15.8 13.7 15.2 13.9 14.75 13.5 15.3 13.05 16.2 12.75 17.05 12.1 16.2 11.2 14.8 11.35 13.2 11.5 11.4 12.3 9.2 13.6 7.8Z" fill="#5b715e"/><path d="M12.85 16.95H13.2L13.05 18.5H12.7Z" fill="#5b715e"/><path d="M10.55 31.35Q10.55 32 11.35 32H15Q15.8 32 15.8 31.35V19.45C15.8 19.05 16.2 18.65 16.1 18.25 15.95 17.85 15.4 17.75 15.1 18.1 14.8 18.45 14.45 18.7 14.1 18.3 13.75 17.9 13.45 17.7 13.1 18.05 12.75 17.7 12.4 17.95 12.05 18.4 11.7 18.85 11.3 18.5 11 18.1 10.65 17.7 10.05 17.95 10.05 18.4 10.05 18.85 10.5 19.1 10.55 19.45V31.35Z" fill="#5b715e"/></svg></span>
+          <span>помним</span>
+        </div>
+        <div class="who"><strong>Марат</strong><span>Исполнитель</span></div>
+      </div>
+      <form class="screen" id="photo-form">
+        <a class="back" href="14-raboty.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>
+          Заявки
+        </a>
+        <h1>Фотоотчёт</h1>
+        <p class="remark" id="remark" hidden></p>
+        <article class="card">
+          <div class="grave-photo" aria-hidden="true"><span class="arch"><i></i></span></div>
+          <p class="photo-label">Фото могилы</p>
+          <h2 id="grave-name">Хугаев Сослан Батрович</h2>
+          <p class="meta" id="grave-meta">Согласовано · 20 октября 2026 · 800 ₽</p>
+          <p class="meta" id="grave-place">Городское кладбище, центральная аллея, третий ряд, ограда справа</p>
+          <p id="grave-task">Осмотр и фото. Ограду не красить без согласования цвета.</p>
+          <p class="meta">Амина · +7 918 123-45-67</p>
+        </article>
+        <div class="shots">
+          <button class="shot" id="before" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V6m0 0-4 4m4-4 4 4"/><path d="M5 18h14"/></svg>
+            <span>До</span>
+          </button>
+          <button class="shot" id="after" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V6m0 0-4 4m4-4 4 4"/><path d="M5 18h14"/></svg>
+            <span>После</span>
+          </button>
+        </div>
+        <label for="comment">Коротко, что сделано</label>
+        <textarea id="comment" maxlength="400" required placeholder="Что убрали, что оставили, что не трогали"></textarea>
+        <p class="help">Заказчик примет отчёт или вернёт его с замечанием.</p>
+      </form>
+      <div class="dock">
+        <button class="btn" id="send" type="submit" form="photo-form" disabled>Отправить фотоотчёт</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const before = document.getElementById('before');
+    const after = document.getElementById('after');
+    const comment = document.getElementById('comment');
+    const send = document.getElementById('send');
+
+    function mark(button) {
+      const on = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', on ? 'true' : 'false');
+      button.classList.toggle('set', on);
+      button.querySelector('span').textContent = on ? 'Снимок выбран' : button.id === 'before' ? 'До' : 'После';
+      refresh();
+    }
+
+    function refresh() {
+      const ready = before.getAttribute('aria-pressed') === 'true' && after.getAttribute('aria-pressed') === 'true';
+      send.disabled = !ready || !comment.value.trim();
+    }
+
+    function readStore(key) {
+      try {
+        const value = JSON.parse(sessionStorage.getItem(key) || 'null');
+        return value && typeof value === 'object' ? value : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    const jobs = {
+      zarina: {
+        name: 'Хугаева Зарина Сослановна',
+        meta: 'Согласовано · 15 ноября 2026 · 3 200 ₽',
+        place: 'Городское кладбище, центральная аллея, третий ряд, ограда слева',
+        task: 'Уборка и букет. Кусты у ограды и лампаду не трогать.'
+      },
+      soslan: {
+        name: 'Хугаев Сослан Батрович',
+        meta: 'Согласовано · 20 октября 2026 · 800 ₽',
+        place: 'Городское кладбище, центральная аллея, третий ряд, ограда справа',
+        task: 'Осмотр и фото. Ограду не красить без согласования цвета.'
+      }
+    };
+    const params = new URLSearchParams(location.search);
+    const jobId = jobs[params.get('id')] ? params.get('id') : 'soslan';
+    const job = jobs[jobId];
+    document.getElementById('grave-name').textContent = job.name;
+    document.getElementById('grave-meta').textContent = job.meta;
+    document.getElementById('grave-place').textContent = job.place;
+    document.getElementById('grave-task').textContent = job.task;
+    if (params.get('revision') === '1') {
+      let note = null;
+      try { note = JSON.parse(sessionStorage.getItem('pomnim-revision') || 'null'); } catch (error) { note = null; }
+      if (note && note.id === jobId && note.text) {
+        const remark = document.getElementById('remark');
+        remark.hidden = false;
+        remark.textContent = 'Замечание Амины. ' + note.text;
+      }
+    }
+
+    before.addEventListener('click', () => mark(before));
+    after.addEventListener('click', () => mark(after));
+    comment.addEventListener('input', refresh);
+    document.getElementById('photo-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (send.disabled) return;
+      sessionStorage.setItem('pomnim-photos', JSON.stringify(Object.assign(readStore('pomnim-photos'), { [jobId]: true })));
+      const note = readStore('pomnim-revision');
+      if (note && note.id === jobId) sessionStorage.removeItem('pomnim-revision');
+      location.href = '14-raboty.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#344b3d">
+  <title>Помним — исполнитель</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23344b3d'/%3E%3Cpath d='M19 45V28a13 13 0 0 1 26 0v17M27 45V30a5 5 0 0 1 10 0v15' fill='none' stroke='%23eee9db' stroke-width='3'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f7f2;
+      --paper: #fff;
+      --ink: #283a32;
+      --muted: #737d75;
+      --green: #344f40;
+      --line: #e2e6dd;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e7eee4; color: var(--ink); font-family: Arial, "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.55; }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #b38454; outline-offset: 3px; }
+    .stage { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 28px 16px; }
+    .stage-label { margin: 0; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: #77856d; }
+    .stage-nav { margin: 0; font-size: 12px; }
+    .stage-nav a { color: var(--green); }
+    .phone { width: 390px; height: 844px; max-height: calc(100dvh - 88px); background: var(--bg); border: 1px solid var(--line); border-radius: 36px; box-shadow: 0 20px 80px #102f2433; overflow: hidden; display: flex; flex-direction: column; }
+    .top { display: flex; align-items: center; justify-content: space-between; padding: 26px 22px 0; }
+    .brand { display: flex; gap: 10px; align-items: center; font-family: Georgia, "Times New Roman", serif; font-size: 26px; letter-spacing: -1.2px; line-height: 1; }
+    .brand-symbol { width: 24px; height: 28px; border: 2px solid #5b715e; border-bottom: 0; border-radius: 16px 16px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .brand-symbol svg { display: block; width: 6px; height: 18px; }
+    .who { text-align: right; }
+    .who strong { display: block; font-family: Georgia, "Times New Roman", serif; font-size: 16px; font-weight: 400; }
+    .who span { font-size: 10px; color: #637b55; }
+    .screen { flex: 1; min-height: 0; overflow: auto; padding: 18px 22px 12px; scrollbar-width: none; }
+    .screen::-webkit-scrollbar { display: none; }
+    .back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--green); font-size: 12px; }
+    .back svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    h1 { margin: 0 0 14px; font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; letter-spacing: -0.7px; line-height: 1.15; }
+    .card, .msg { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .grave-photo { height: 92px; margin-bottom: 12px; border-radius: 12px; background: #f1e9dd; display: grid; place-items: center; }
+    .arch { width: 22px; height: 26px; border: 2px solid #b08968; border-bottom: 0; border-radius: 14px 14px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .arch i { display: block; width: 12px; height: 16px; border: 2px solid #c4b09a; border-bottom: 0; border-radius: 10px 10px 0 0; }
+    .photo-label { margin: -4px 0 10px; font-size: 11px; color: var(--muted); }
+    .card h2 { margin: 0 0 4px; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 400; line-height: 1.25; }
+    .meta, .help { margin: 0; font-size: 12px; line-height: 1.55; color: #8b9482; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+    .tag { background: #f4f5ef; border: 1px solid #e9ebdf; border-radius: 6px; padding: 4px 8px; font-size: 11px; }
+    .card p { margin: 0; font-size: 13px; line-height: 1.6; }
+    .note { margin-top: 10px; padding: 12px; border: 1px solid #e5dfcd; background: #f5f2e9; color: #82765b; border-radius: 12px; font-size: 13px; line-height: 1.55; }
+    .group { margin: 18px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: #77856d; }
+    label { display: block; margin: 12px 0 6px; font-size: 12px; font-weight: 500; }
+    input, textarea { width: 100%; padding: 12px; border: 1px solid #dce2d4; border-radius: 8px; background: #fff; color: var(--ink); font-size: 16px; }
+    textarea { min-height: 88px; resize: vertical; }
+    input:focus, textarea:focus { border-color: #859c78; outline: none; }
+    .help { margin-top: 8px; }
+    #composer[hidden], #sent-box[hidden] { display: none; }
+    .sent { margin-top: 16px; padding: 14px 16px; background: #eef2e7; border: 1px solid #d5e0cc; border-radius: 14px; }
+    .sent .price { margin: 0 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
+    .sent p { margin: 0; font-size: 13px; line-height: 1.6; }
+    .dock { padding: 12px 22px 18px; background: #fafbf7; border-top: 1px solid var(--line); }
+    .btn { width: 100%; border: 0; border-radius: 8px; padding: 13px 18px; background: var(--green); color: #fff; font-size: 13px; font-weight: 500; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn[hidden], .dock[hidden] { display: none; }
+    @media (max-width: 480px) {
+      body { background: var(--bg); }
+      .stage { padding: 0; gap: 0; }
+      .stage-label, .stage-nav { display: none; }
+      .phone { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="stage-label">Экран 10 · Исполнитель</p>
+    <div class="phone">
+      <div class="top">
+        <div class="brand">
+          <span class="brand-symbol" aria-hidden="true"><svg viewBox="10 7.6 7.4 24.6"><path d="M13.6 7.8C15.1 9.5 16.5 11.8 16.9 13.6 17.25 15 16.8 16.1 15.9 16.5 15.2 16.8 14.6 16.55 14.2 16.15 13.85 15.8 13.7 15.2 13.9 14.75 13.5 15.3 13.05 16.2 12.75 17.05 12.1 16.2 11.2 14.8 11.35 13.2 11.5 11.4 12.3 9.2 13.6 7.8Z" fill="#5b715e"/><path d="M12.85 16.95H13.2L13.05 18.5H12.7Z" fill="#5b715e"/><path d="M10.55 31.35Q10.55 32 11.35 32H15Q15.8 32 15.8 31.35V19.45C15.8 19.05 16.2 18.65 16.1 18.25 15.95 17.85 15.4 17.75 15.1 18.1 14.8 18.45 14.45 18.7 14.1 18.3 13.75 17.9 13.45 17.7 13.1 18.05 12.75 17.7 12.4 17.95 12.05 18.4 11.7 18.85 11.3 18.5 11 18.1 10.65 17.7 10.05 17.95 10.05 18.4 10.05 18.85 10.5 19.1 10.55 19.45V31.35Z" fill="#5b715e"/></svg></span>
+          <span>помним</span>
+        </div>
+        <div class="who"><strong>Марат</strong><span>Исполнитель</span></div>
+      </div>
+      <form class="screen" id="offer-form">
+        <a class="back" href="14-raboty.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m6-6-6 6 6 6"/></svg>
+          Заявки
+        </a>
+        <h1 id="heading">Новая заявка</h1>
+        <article class="card">
+          <div class="grave-photo" aria-hidden="true"><span class="arch"><i></i></span></div>
+          <p class="photo-label">Фото могилы</p>
+          <h2>Хугаева Зарина Сослановна</h2>
+          <p class="meta">15 ноября 2026 · Владикавказ · Городское кладбище</p>
+          <p class="meta">Центральная аллея, третий ряд, ограда слева</p>
+          <div class="tags">
+            <span class="tag">Уборка участка</span>
+            <span class="tag">Возложение цветов</span>
+          </div>
+          <p>К 15 ноября. Не трогать кусты у ограды и лампаду.</p>
+        </article>
+        <div id="composer">
+          <h2 class="group">Ваше предложение</h2>
+          <label for="amount">Сумма, ₽</label>
+          <input id="amount" inputmode="numeric" maxlength="7" placeholder="3200" required>
+          <label for="scope">Что входит и когда приедете</label>
+          <textarea id="scope" maxlength="800" required placeholder="Работы, что оплачивается отдельно, дата"></textarea>
+          <p class="help">Телефон заказчика откроется после согласия. Фото человека вам не показывается.</p>
+        </div>
+        <div class="sent" id="sent-box" hidden>
+          <p class="meta">Предложение у заказчика</p>
+          <p class="price" id="sent-price">3 200 ₽</p>
+          <p id="sent-scope">Уборка, вывоз листвы и букет. Ограду не крашу. Могу приехать 15 ноября.</p>
+        </div>
+      </form>
+      <div class="dock">
+        <button class="btn" id="send" type="submit" form="offer-form" disabled>Отправить предложение</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const amount = document.getElementById('amount');
+    const scope = document.getElementById('scope');
+    const send = document.getElementById('send');
+    function refresh() {
+      const sum = Number(amount.value.replace(/\s/g, ''));
+      send.disabled = !Number.isInteger(sum) || sum < 1 || !scope.value.trim();
+    }
+    amount.addEventListener('input', refresh);
+    scope.addEventListener('input', refresh);
+    const params = new URLSearchParams(location.search);
+    if (params.get('sent') === '1') {
+      let saved = null;
+      try { saved = JSON.parse(sessionStorage.getItem('pomnim-offer') || 'null'); } catch (error) { saved = null; }
+      const offer = saved || { amount: '3200', scope: 'Уборка, вывоз листвы и букет. Ограду не крашу. Могу приехать 15 ноября.' };
+      const sum = String(offer.amount).replace(/\s/g, '');
+      document.getElementById('heading').textContent = 'Предложение отправлено';
+      document.getElementById('sent-price').textContent = Number(sum).toLocaleString('ru-RU') + ' ₽';
+      document.getElementById('sent-scope').textContent = offer.scope;
+      document.getElementById('composer').hidden = true;
+      document.getElementById('sent-box').hidden = false;
+      document.getElementById('send').hidden = true;
+      document.querySelector('.dock').hidden = true;
+    }
+    document.getElementById('offer-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (send.disabled) return;
+      sessionStorage.setItem('pomnim-offer', JSON.stringify({
+        amount: amount.value.replace(/\s/g, ''),
+        scope: scope.value.trim()
+      }));
+      location.href = '14-raboty.html?sent=1';
+    });
+  </script>
+</body>
+</html>

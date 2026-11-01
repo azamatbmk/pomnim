@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pomnim
+      POSTGRES_PASSWORD: pomnim
+      POSTGRES_DB: pomnim
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pomnim -d pomnim"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://pomnim:pomnim@postgres:5432/pomnim
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-owner}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      JWT_SECRET: ${JWT_SECRET:-change-me-too}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

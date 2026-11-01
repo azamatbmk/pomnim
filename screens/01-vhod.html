@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#344b3d">
+  <title>Помним — вход</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23344b3d'/%3E%3Cpath d='M19 45V28a13 13 0 0 1 26 0v17M27 45V30a5 5 0 0 1 10 0v15' fill='none' stroke='%23eee9db' stroke-width='3'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f7f2;
+      --paper: #fff;
+      --ink: #283a32;
+      --muted: #737d75;
+      --green: #344f40;
+      --line: #e2e6dd;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #e7eee4;
+      color: var(--ink);
+      font-family: Arial, "Helvetica Neue", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button, input { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid #b38454;
+      outline-offset: 4px;
+    }
+
+    .stage {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 28px 16px;
+    }
+
+    .stage-label {
+      margin: 0;
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #77856d;
+    }
+
+    .phone {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      max-height: calc(100dvh - 88px);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 36px;
+      box-shadow: 0 20px 80px #102f2433;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 24px 22px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      letter-spacing: -1.6px;
+      line-height: 1;
+    }
+
+    .brand-symbol {
+      width: 32px;
+      height: 38px;
+      border: 2px solid #5b715e;
+      border-bottom: 0;
+      border-radius: 22px 22px 0 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .brand-symbol svg {
+      display: block;
+      width: 7px;
+      height: 22px;
+    }
+
+    .brand-caption {
+      display: block;
+      margin-top: 7px;
+      font: 9px Arial, sans-serif;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    .region {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 28px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .region svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .eyebrow {
+      display: block;
+      margin: 34px 0 14px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #77856d;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      max-width: 300px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 36px;
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: -1.1px;
+    }
+
+    .lead {
+      max-width: 280px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #6d7867;
+    }
+
+    form {
+      margin-top: 28px;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .phone-row {
+      display: flex;
+      align-items: center;
+      border: 1px solid #dce2d4;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .phone-row:focus-within {
+      border-color: #859c78;
+    }
+
+    .prefix {
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 16px;
+      border-right: 1px solid var(--line);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 12px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    input::placeholder { color: #a1a896; }
+    input:focus { outline: none; }
+
+    .btn {
+      width: 100%;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--green);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .btn:hover { background: #233d2f; }
+
+    .btn svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .field-help {
+      margin: 10px 0 0;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #8b9482;
+    }
+
+    .art {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 46%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .art svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .art::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(#f7f7f2 0%, rgb(247 247 242 / 0) 46%);
+    }
+
+    @media (max-width: 480px) {
+      body { background: var(--bg); }
+      .stage { padding: 0; gap: 0; }
+      .stage-label { display: none; }
+      .phone {
+        width: 100%;
+        height: 100dvh;
+        max-height: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="stage-label">Экран 1 · Вход</p>
+    <div class="phone">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 560 360" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="fade" x1="0" x2="1">
+              <stop offset="0" stop-color="#e8ecdf" stop-opacity="0"/>
+              <stop offset="1" stop-color="#dce4d0"/>
+            </linearGradient>
+            <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#c5d0b5"/>
+              <stop offset="1" stop-color="#8ea080"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#fade)" d="M0 0h560v360H0z"/>
+          <circle cx="422" cy="91" r="42" fill="#f1efdc"/>
+          <path d="m70 263 130-126 50 35L335 42l49 84 40-21 136 165v90H70Z" fill="#d2dbc5"/>
+          <path d="m335 42 49 84 40-21 136 165v90H245l91-147-28-33 28-38-14-21Z" fill="#bdcbae"/>
+          <path d="m277 132 58-90 33 56-22-8-14 16-15-4-16 30-7-10Z" fill="#f1f0e2"/>
+          <path d="m51 337 91-102 53 18 56-56 62 73 40-24 80 52 127-64v126H51Z" fill="url(#ridge)"/>
+          <path d="M0 360c124-47 165-54 255-28 93 27 169-51 305-17v45Z" fill="#879d7d"/>
+          <path d="M267 360c58-20 80-36 105-33 25 3 47-4 71-16" fill="none" stroke="#d6dec5" stroke-width="2"/>
+          <path d="M455 360V230m0 27-21-15m21 37 24-18m-24 43-29-20m29 43 30-21" fill="none" stroke="#6f8966" stroke-width="3"/>
+          <path d="M493 360V278m0 24-12-9m12 26 15-13m-15 33-16-12" fill="none" stroke="#6f8966" stroke-width="2"/>
+        </svg>
+      </div>
+      <main class="screen">
+        <div class="brand">
+          <span class="brand-symbol" aria-hidden="true"><svg viewBox="10 7.6 7.4 24.6"><path d="M13.6 7.8C15.1 9.5 16.5 11.8 16.9 13.6 17.25 15 16.8 16.1 15.9 16.5 15.2 16.8 14.6 16.55 14.2 16.15 13.85 15.8 13.7 15.2 13.9 14.75 13.5 15.3 13.05 16.2 12.75 17.05 12.1 16.2 11.2 14.8 11.35 13.2 11.5 11.4 12.3 9.2 13.6 7.8Z" fill="#5b715e"/><path d="M12.85 16.95H13.2L13.05 18.5H12.7Z" fill="#5b715e"/><path d="M10.55 31.35Q10.55 32 11.35 32H15Q15.8 32 15.8 31.35V19.45C15.8 19.05 16.2 18.65 16.1 18.25 15.95 17.85 15.4 17.75 15.1 18.1 14.8 18.45 14.45 18.7 14.1 18.3 13.75 17.9 13.45 17.7 13.1 18.05 12.75 17.7 12.4 17.95 12.05 18.4 11.7 18.85 11.3 18.5 11 18.1 10.65 17.7 10.05 17.95 10.05 18.4 10.05 18.85 10.5 19.1 10.55 19.45V31.35Z" fill="#5b715e"/></svg></span>
+          <span>помним<span class="brand-caption">забота о памяти</span></span>
+        </div>
+        <p class="region">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Северная Осетия — Алания
+        </p>
+        <span class="eyebrow">Вход</span>
+        <h1>Память близко.<br>Даже когда вы далеко.</h1>
+        <p class="lead">Номер телефона откроет кабинет с могилами, заказами и фотоотчётами.</p>
+        <form action="02-kod.html" method="get">
+          <label class="form-label" for="phone">Номер телефона</label>
+          <div class="phone-row">
+            <span class="prefix" aria-hidden="true">+7</span>
+            <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="900 000-00-00" maxlength="15">
+          </div>
+          <button class="btn" type="submit">
+            Получить код
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+          </button>
+          <p class="field-help">Код придёт в СМС. Пароль не нужен.</p>
+        </form>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

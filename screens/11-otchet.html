@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#344b3d">
+  <title>Помним — фотоотчёт</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23344b3d'/%3E%3Cpath d='M19 45V28a13 13 0 0 1 26 0v17M27 45V30a5 5 0 0 1 10 0v15' fill='none' stroke='%23eee9db' stroke-width='3'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f7f2;
+      --paper: #fff;
+      --ink: #283a32;
+      --muted: #737d75;
+      --green: #344f40;
+      --line: #e2e6dd;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e7eee4; color: var(--ink); font-family: Arial, "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.55; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    button, a, textarea { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 3px solid #b38454; outline-offset: 3px; }
+    .stage { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 28px 16px; }
+    .stage-label { margin: 0; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: #77856d; }
+    .phone { width: 390px; height: 844px; max-height: calc(100dvh - 88px); background: var(--bg); border: 1px solid var(--line); border-radius: 36px; box-shadow: 0 20px 80px #102f2433; overflow: hidden; display: flex; flex-direction: column; }
+    .top { display: flex; align-items: center; padding: 26px 22px 0; }
+    .brand { display: flex; gap: 10px; align-items: center; font-family: Georgia, "Times New Roman", serif; font-size: 26px; letter-spacing: -1.2px; line-height: 1; }
+    .brand-symbol { width: 24px; height: 28px; border: 2px solid #5b715e; border-bottom: 0; border-radius: 16px 16px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .brand-symbol svg { display: block; width: 6px; height: 18px; }
+    .screen { flex: 1; min-height: 0; overflow: auto; padding: 18px 22px 12px; scrollbar-width: none; }
+    .screen::-webkit-scrollbar { display: none; }
+    .status { display: inline-flex; padding: 5px 10px; border-radius: 20px; background: #edeefa; color: #77709b; font-size: 10px; }
+    .status.done { background: #edf1e8; color: #637b55; }
+    h1 { margin: 12px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; letter-spacing: -0.6px; line-height: 1.2; }
+    h1 a { color: inherit; }
+    .when { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+    .report { margin-top: 18px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; }
+    .who { margin: 0 0 10px; font-size: 10px; font-weight: 600; letter-spacing: 1.1px; text-transform: uppercase; color: #77856d; }
+    .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    figure { margin: 0; }
+    .shot { height: 120px; border-radius: 12px; background: #e8edde; display: grid; place-items: center; }
+    .shot.after { background: #f1e9dd; }
+    .arch { width: 22px; height: 26px; border: 2px solid #5b715e; border-bottom: 0; border-radius: 14px 14px 0 0; display: flex; justify-content: center; align-items: flex-end; }
+    .arch i { display: block; width: 12px; height: 16px; border: 2px solid #a7af92; border-bottom: 0; border-radius: 10px 10px 0 0; }
+    .shot.after .arch { border-color: #b08968; }
+    .shot.after .arch i { border-color: #c4b09a; }
+    figcaption { margin-top: 6px; font-size: 11px; color: var(--muted); }
+    .report p, .agreed { margin: 12px 0 0; font-size: 13px; line-height: 1.6; }
+    .agreed { margin-top: 12px; color: #6d7867; }
+    #revision[hidden] { display: none; }
+    textarea { width: 100%; margin-top: 12px; padding: 12px; border: 1px solid #dce2d4; border-radius: 8px; font-size: 16px; min-height: 80px; }
+    .done-note { margin: 14px 0 0; font-size: 13px; color: #637b55; }
+    .dock { padding: 12px 22px 14px; background: #fafbf7; border-top: 1px solid var(--line); }
+    .btn, .quiet { width: 100%; border-radius: 8px; padding: 13px 18px; font-size: 13px; font-weight: 500; }
+    .btn { border: 0; background: var(--green); color: #fff; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .quiet { margin-top: 8px; border: 1px solid var(--line); background: #fff; color: var(--green); }
+    .tabs { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 8px; }
+    .tabs button { border: 0; background: transparent; color: #6c786e; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0 2px; }
+    .tabs button[aria-current="page"] { color: var(--green); font-weight: 600; }
+    .tabs svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    @media (max-width: 480px) {
+      body { background: var(--bg); }
+      .stage { padding: 0; gap: 0; }
+      .stage-label { display: none; }
+      .phone { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="stage-label">Экран 11 · Фотоотчёт</p>
+    <div class="phone">
+      <div class="top">
+        <div class="brand">
+          <span class="brand-symbol" aria-hidden="true"><svg viewBox="10 7.6 7.4 24.6"><path d="M13.6 7.8C15.1 9.5 16.5 11.8 16.9 13.6 17.25 15 16.8 16.1 15.9 16.5 15.2 16.8 14.6 16.55 14.2 16.15 13.85 15.8 13.7 15.2 13.9 14.75 13.5 15.3 13.05 16.2 12.75 17.05 12.1 16.2 11.2 14.8 11.35 13.2 11.5 11.4 12.3 9.2 13.6 7.8Z" fill="#5b715e"/><path d="M12.85 16.95H13.2L13.05 18.5H12.7Z" fill="#5b715e"/><path d="M10.55 31.35Q10.55 32 11.35 32H15Q15.8 32 15.8 31.35V19.45C15.8 19.05 16.2 18.65 16.1 18.25 15.95 17.85 15.4 17.75 15.1 18.1 14.8 18.45 14.45 18.7 14.1 18.3 13.75 17.9 13.45 17.7 13.1 18.05 12.75 17.7 12.4 17.95 12.05 18.4 11.7 18.85 11.3 18.5 11 18.1 10.65 17.7 10.05 17.95 10.05 18.4 10.05 18.85 10.5 19.1 10.55 19.45V31.35Z" fill="#5b715e"/></svg></span>
+          <span>помним</span>
+        </div>
+      </div>
+      <main class="screen">
+        <span class="status" id="status">Фотоотчёт готов</span>
+        <h1><a id="person" href="05-mogila.html?id=zarina">Хугаева Зарина Сослановна</a></h1>
+        <p class="when" id="when">15 ноября 2026 · Владикавказ · 3 200 ₽</p>
+        <article class="report">
+          <p class="who">Марат · фотоотчёт</p>
+          <div class="shots">
+            <figure>
+              <div class="shot" aria-hidden="true"><span class="arch"><i></i></span></div>
+              <figcaption>До</figcaption>
+            </figure>
+            <figure>
+              <div class="shot after" aria-hidden="true"><span class="arch"><i></i></span></div>
+              <figcaption>После</figcaption>
+            </figure>
+          </div>
+          <p id="comment">Убрал листву и мусор, оставил букет у плиты. Кусты и лампаду не трогал.</p>
+        </article>
+        <p class="agreed" id="agreed">Согласованы уборка и цветы. Ограда не входила.</p>
+        <div id="revision" hidden>
+          <textarea id="remark" maxlength="800" placeholder="Что нужно поправить"></textarea>
+        </div>
+        <p class="done-note" id="done" hidden>Работа принята. Фотоотчёт сохранён в заказе.</p>
+        <p class="done-note" id="remark-sent" hidden>Замечание у Марата. Он увидит его в своих заявках и пришлёт снимки снова.</p>
+      </main>
+      <div class="dock" id="dock">
+        <button class="btn" id="accept" type="button">Принять</button>
+        <button class="quiet" id="revise" type="button">Нужна доработка</button>
+        <nav class="tabs" aria-label="Разделы кабинета">
+          <button type="button" id="go-graves">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V11a6 6 0 0 1 12 0v9"/><path d="M10 20v-6a2 2 0 0 1 4 0v6"/></svg>
+            Могилы
+          </button>
+          <button type="button" id="go-orders" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10h6M9 14h6M9 18h3"/></svg>
+            Заказы
+          </button>
+          <button type="button" id="go-profile">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20v-2a7 7 0 0 1 14 0v2"/></svg>
+            Профиль
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    const revision = document.getElementById('revision');
+    const remark = document.getElementById('remark');
+    const accept = document.getElementById('accept');
+    const revise = document.getElementById('revise');
+    const status = document.getElementById('status');
+    const done = document.getElementById('done');
+
+    revise.addEventListener('click', () => {
+      if (revision.hidden) {
+        revision.hidden = false;
+        revise.textContent = 'Отправить замечание';
+        accept.hidden = true;
+        remark.focus();
+        return;
+      }
+      if (!remark.value.trim()) return;
+      status.textContent = 'На доработке';
+      status.classList.remove('done');
+      revise.hidden = true;
+      remark.disabled = true;
+      const reportId = new URLSearchParams(location.search).get('id') || 'zarina';
+      sessionStorage.setItem('pomnim-revision', JSON.stringify({ id: reportId, text: remark.value.trim() }));
+      document.getElementById('remark-sent').hidden = false;
+    });
+
+    accept.addEventListener('click', () => {
+      status.textContent = 'Работа принята';
+      status.classList.add('done');
+      accept.hidden = true;
+      revise.hidden = true;
+      revision.hidden = true;
+      done.hidden = false;
+    });
+
+    const reports = {
+      soslan: {
+        name: 'Хугаев Сослан Батрович',
+        when: '20 октября 2026 · Владикавказ · 800 ₽',
+        comment: 'Сделал осмотр и снимки плиты. Ограду не красил.',
+        agreed: 'Согласован осмотр и фото.'
+      }
+    };
+    const reportId = new URLSearchParams(location.search).get('id');
+    const report = reports[reportId];
+    if (report) {
+      document.getElementById('person').textContent = report.name;
+      document.getElementById('person').href = '05-mogila.html?id=' + reportId;
+      document.getElementById('when').textContent = report.when;
+      document.getElementById('comment').textContent = report.comment;
+      document.getElementById('agreed').textContent = report.agreed;
+    }
+
+    document.getElementById('go-graves').addEventListener('click', () => { location.href = '04-mogily.html'; });
+    document.getElementById('go-orders').addEventListener('click', () => { location.href = '13-zakazy.html'; });
+    document.getElementById('go-profile').addEventListener('click', () => { location.href = '07-profil.html'; });
+  </script>
+</body>
+</html>
