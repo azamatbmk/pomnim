@@ -9,6 +9,7 @@
     "build": "npm run build --workspace @pomnim/shared && npm run build --workspace @pomnim/api && npm run build --workspace @pomnim/web",
     "dev:api": "npm run dev --workspace @pomnim/api",
     "dev:web": "npm run dev --workspace @pomnim/web",
+    "dev:mobile": "npm run start --workspace @pomnim/mobile",
     "db:migrate": "npm run prisma:migrate --workspace @pomnim/api"
   }
 }

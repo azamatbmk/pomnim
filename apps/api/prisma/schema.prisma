@@ -23,3 +23,20 @@ model Worker {
   disabledAt DateTime?
   createdAt  DateTime  @default(now())
 }
+
+model Customer {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model PhoneCode {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}

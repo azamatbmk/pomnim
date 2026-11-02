@@ -7,6 +7,16 @@ export const tokens = {
   line: '#e2e6dd',
 } as const
 
+export type AppRole = 'customer' | 'worker'
+
+export type AppSession = {
+  token: string
+  role: AppRole
+  phone: string
+  name: string | null
+  needsName: boolean
+}
+
 export type Worker = {
   id: string
   name: string
