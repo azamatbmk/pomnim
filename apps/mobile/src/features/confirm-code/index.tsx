@@ -1,6 +1,6 @@
 import type { AppSession } from '@pomnim/shared'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState, type ComponentRef } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { useSession } from '../../entities/session'
 import { api, ApiError } from '../../shared/api/client'
@@ -15,6 +15,7 @@ type CodeFormProps = {
 export function CodeForm({ phone, devCode }: CodeFormProps) {
   const router = useRouter()
   const { signIn } = useSession()
+  const input = useRef<ComponentRef<typeof TextInput>>(null)
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -60,19 +61,23 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
     <View style={styles.card}>
       <View style={styles.boxes}>
         {[0, 1, 2, 3].map((index) => (
-          <View key={index} style={styles.box}>
+          <View key={index} pointerEvents="none" style={styles.box}>
             <Text style={styles.digit}>{code[index] ?? ''}</Text>
           </View>
         ))}
         <TextInput
+          ref={input}
           value={code}
           onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, 4))}
           keyboardType="number-pad"
           inputMode="numeric"
+          autoComplete="sms-otp"
+          textContentType="oneTimeCode"
           maxLength={4}
           autoFocus
-          style={styles.catcher}
           caretHidden
+          underlineColorAndroid="transparent"
+          style={styles.catcher}
         />
       </View>
       <Button label={pending ? 'Проверяем' : 'Подтвердить'} onPress={submit} disabled={code.length < 4 || pending} />
@@ -87,7 +92,7 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 28,
+    marginTop: 0,
     padding: 18,
     backgroundColor: theme.paper,
     borderWidth: 1,
@@ -101,7 +106,7 @@ const styles = StyleSheet.create({
   },
   box: {
     flex: 1,
-    height: 56,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -119,6 +124,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
+    opacity: 0,
     color: 'transparent',
   },
   help: {

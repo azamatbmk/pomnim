@@ -29,6 +29,40 @@ model Customer {
   phone     String   @unique
   name      String?
   createdAt DateTime @default(now())
+  families  Family[]
+  graves    Grave[]
+}
+
+model Family {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  name       String
+  createdAt  DateTime @default(now())
+  graves     Grave[]
+
+  @@index([customerId])
+}
+
+model Grave {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  familyId   String?
+  family     Family?  @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  fullName   String
+  birthYear  Int?
+  deathYear  Int?
+  city       String
+  cemetery   String
+  landmarks  String?
+  biography  String?
+  keepOff    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([familyId])
 }
 
 model PhoneCode {

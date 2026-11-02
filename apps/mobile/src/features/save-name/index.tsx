@@ -55,7 +55,7 @@ export function NameForm() {
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 28,
+    marginTop: 0,
     padding: 18,
     backgroundColor: theme.paper,
     borderWidth: 1,

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useSession } from '../../entities/session'
 import { BrandMark } from '../../shared/ui/brand-mark'
@@ -7,7 +7,7 @@ import { sans, serif, theme } from '../../shared/ui/theme'
 
 type CabinetProps = {
   title: string
-  lead: string
+  lead?: string
   children?: ReactNode
 }
 
@@ -15,19 +15,21 @@ export function Cabinet({ title, lead, children }: CabinetProps) {
   const { session, signOut } = useSession()
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.top}>
-        <BrandMark width={18} />
-        <Text style={styles.word}>помним</Text>
-      </View>
-      <Text style={styles.who}>{session?.name}</Text>
-      <Text style={styles.phone}>{session?.phone}</Text>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.lead}>{lead}</Text>
-      {children}
-      <Pressable onPress={signOut} style={styles.logout}>
-        <Text style={styles.logoutText}>Выйти</Text>
-      </Pressable>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <View style={styles.top}>
+          <BrandMark width={18} />
+          <Text style={styles.word}>помним</Text>
+        </View>
+        <Text style={styles.who}>{session?.name}</Text>
+        <Text style={styles.phone}>{session?.phone}</Text>
+        <Text style={styles.title}>{title}</Text>
+        {lead ? <Text style={styles.lead}>{lead}</Text> : null}
+        {children}
+        <Pressable onPress={signOut} style={styles.logout}>
+          <Text style={styles.logoutText}>Выйти</Text>
+        </Pressable>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -36,8 +38,11 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: theme.bg,
+  },
+  content: {
     paddingHorizontal: 24,
     paddingTop: 18,
+    paddingBottom: 28,
   },
   top: {
     flexDirection: 'row',

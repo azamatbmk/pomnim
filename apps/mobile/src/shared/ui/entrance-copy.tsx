@@ -2,17 +2,17 @@ import { StyleSheet, Text, View } from 'react-native'
 import { sans, serif, theme } from './theme'
 
 type CopyProps = {
-  eyebrow: string
+  eyebrow?: string
   title: string
-  lead: string
+  lead?: string
 }
 
 export function EntranceCopy({ eyebrow, title, lead }: CopyProps) {
   return (
     <View>
-      <Text style={styles.eyebrow}>{eyebrow}</Text>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.lead}>{lead}</Text>
+      {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
+      <Text style={[styles.title, lead ? null : styles.titleLast]}>{title}</Text>
+      {lead ? <Text style={styles.lead}>{lead}</Text> : null}
     </View>
   )
 }
@@ -28,19 +28,22 @@ const styles = StyleSheet.create({
   },
   title: {
     maxWidth: 320,
-    marginBottom: 14,
+    marginBottom: 8,
     fontFamily: serif,
-    fontSize: 36,
-    lineHeight: 40,
+    fontSize: 28,
+    lineHeight: 32,
     fontWeight: '400',
     letterSpacing: -1.1,
     color: theme.ink,
+  },
+  titleLast: {
+    marginBottom: 0,
   },
   lead: {
     maxWidth: 300,
     fontFamily: sans,
     fontSize: 13,
-    lineHeight: 22,
+    lineHeight: 18,
     color: theme.lead,
   },
 })
