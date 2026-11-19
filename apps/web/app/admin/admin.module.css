@@ -157,8 +157,53 @@
 
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
+.servicesBlock {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.servicesBlock h2 { display: flex; align-items: center; gap: 8px; }
+
+.servicesBlock h2 svg,
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+.iconLabel {
+  display: block;
+  margin: 14px 0 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.icons { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dce2d4;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.iconButtonOn { border-color: var(--green); background: #eef2e7; color: var(--green); }
+
 @media (max-width: 800px) {
-  .body { grid-template-columns: 1fr; padding: 22px; }
+  .body, .servicesBlock { grid-template-columns: 1fr; padding: 22px; }
+  .servicesBlock { padding: 0; }
   .top { padding: 18px 22px; }
 }
 

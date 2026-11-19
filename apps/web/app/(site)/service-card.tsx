@@ -1,23 +1,21 @@
 import Link from 'next/link'
-import { rub, services } from './data'
+import { rub } from './data'
 import { Icon } from './icons'
+import { fallbackServices, liveServices, type PublicService } from './catalog'
 import styles from './site.module.css'
 
-type Service = (typeof services)[number]
-
-export function ServiceCard({ service, linked }: { service: Service; linked?: boolean }) {
+export function ServiceCard({ service, linked }: { service: PublicService; linked?: boolean }) {
   const body = (
     <>
-      <span className={styles.serviceIcon}>
-        <Icon name={service.icon} className={styles.serviceGlyph} />
-      </span>
+      {service.icon ? (
+        <span className={styles.serviceIcon}>
+          <Icon name={service.icon} className={styles.serviceGlyph} />
+        </span>
+      ) : null}
       <h3>{service.title}</h3>
       <p>{service.description}</p>
       <span className={styles.price}>
-        <span>
-          от {rub(service.price)}
-          <small>пример стоимости</small>
-        </span>
+        <span>{rub(service.price)}</span>
         {linked ? <Icon name="arrow" className={styles.priceArrow} /> : null}
       </span>
     </>
@@ -36,10 +34,11 @@ export function ServiceCard({ service, linked }: { service: Service; linked?: bo
   )
 }
 
-export function ServiceGrid({ linked }: { linked?: boolean }) {
+export async function ServiceGrid({ linked }: { linked?: boolean }) {
+  const list = (await liveServices()) ?? fallbackServices()
   return (
     <div className={styles.services}>
-      {services.map((service) => (
+      {list.map((service) => (
         <ServiceCard key={service.id} service={service} linked={linked} />
       ))}
     </div>

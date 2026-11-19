@@ -75,8 +75,9 @@ export default function HomePage() {
           <div>
             <b>02</b>
             <span>
-              Согласуйте цену
-              <br />с исполнителем
+              Цена услуги
+              <br />
+              уже указана
             </span>
           </div>
           <div>
@@ -88,7 +89,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <p className={styles.disclaimer}>Цены на сайте — примеры. Стоимость называет исполнитель, когда видит задачу.</p>
+      <p className={styles.disclaimer}>Цены на услуги фиксированные. Если задача не из списка, сумму называет семья.</p>
     </>
   )
 }

@@ -31,6 +31,7 @@ model Customer {
   createdAt DateTime @default(now())
   families  Family[]
   graves    Grave[]
+  orders    Order[]
 }
 
 model Family {
@@ -60,9 +61,41 @@ model Grave {
   keepOff    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  orders     Order[]
 
   @@index([customerId])
   @@index([familyId])
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  graveId    String
+  grave      Grave    @relation(fields: [graveId], references: [id], onDelete: Restrict)
+  service      String
+  serviceTitle String   @default("")
+  details      String?
+  wishes       String?
+  price      Int
+  desiredOn  DateTime @db.Date
+  status     String   @default("open")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([graveId])
+  @@index([status])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Int
+  icon        String?
+  sort        Int
+  createdAt   DateTime @default(now())
 }
 
 model PhoneCode {

@@ -1,34 +1,3 @@
-export const services = [
-  {
-    id: 'clean',
-    title: 'Уборка участка',
-    description: 'Листва, сорняки, мусор и бережная очистка.',
-    price: 1500,
-    icon: 'leaf',
-  },
-  {
-    id: 'paint',
-    title: 'Покраска ограды',
-    description: 'Подготовка поверхности и обновление покрытия.',
-    price: 3000,
-    icon: 'paint',
-  },
-  {
-    id: 'flowers',
-    title: 'Возложение цветов',
-    description: 'Цветы к памятной дате по вашим пожеланиям.',
-    price: 1200,
-    icon: 'flower',
-  },
-  {
-    id: 'visit',
-    title: 'Осмотр и фото',
-    description: 'Проверка состояния участка с фотоотчётом.',
-    price: 800,
-    icon: 'camera',
-  },
-] as const
-
 export const people = [
   {
     id: '01',

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { apiFetch, readError } from './api'
 import { BrandMark } from './brand-mark'
+import { ServicesSection } from './services-section'
 import styles from './admin.module.css'
 
 export function AdminScreen() {
@@ -93,6 +94,7 @@ export function AdminScreen() {
           <button className={styles.quiet} type="button" onClick={() => void logout()}>Выйти</button>
         </header>
         <div className={styles.body}>
+          <ServicesSection />
           <section>
             <h1>Исполнители</h1>
             <p className={styles.lead}>Людей сюда добавляете вы. Сами они зарегистрироваться не могут.</p>

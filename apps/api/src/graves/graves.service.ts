@@ -102,12 +102,22 @@ export class GravesService {
 
   async remove(user: AppToken, id: string) {
     const customerId = this.customerId(user)
-    await this.write(async (tx) => {
-      const changed = await tx.grave.deleteMany({ where: { id, customerId } })
-      if (changed.count !== 1) throw new NotFoundException('Карточка не найдена')
-      await this.removeEmptyFamilies(tx, customerId)
-      return null
-    })
+    try {
+      await this.write(async (tx) => {
+        const grave = await tx.grave.findFirst({ where: { id, customerId }, select: { id: true } })
+        if (!grave) throw new NotFoundException('Карточка не найдена')
+        const orders = await tx.order.count({ where: { graveId: id, customerId } })
+        if (orders > 0) throw new BadRequestException('По этой карточке есть заявка. Удалить её нельзя.')
+        await tx.grave.delete({ where: { id } })
+        await this.removeEmptyFamilies(tx, customerId)
+        return null
+      })
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        throw new BadRequestException('По этой карточке есть заявка. Удалить её нельзя.')
+      }
+      throw error
+    }
     return { ok: true as const }
   }
 
