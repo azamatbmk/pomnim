@@ -37,25 +37,12 @@
   line-height: 1;
 }
 
-.caption {
-  display: block;
-  margin-top: 3px;
-  font-size: 11px;
-  color: #77856d;
-}
-
 .card h1 {
   margin: 0 0 6px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 32px;
   font-weight: 400;
   letter-spacing: -0.8px;
-}
-
-.lead {
-  margin: 0;
-  color: #6d7867;
-  font-size: 13px;
 }
 
 .card label {

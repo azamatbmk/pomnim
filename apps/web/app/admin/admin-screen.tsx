@@ -88,10 +88,7 @@ export function AdminScreen() {
         <header className={styles.top}>
           <div className={styles.brand}>
             <BrandMark className={styles.symbol} />
-            <div>
-              <strong>помним</strong>
-              <span className={styles.caption}>Админка владельца</span>
-            </div>
+            <strong>помним</strong>
           </div>
           <button className={styles.quiet} type="button" onClick={() => void logout()}>Выйти</button>
         </header>

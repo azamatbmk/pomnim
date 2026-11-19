@@ -35,13 +35,9 @@ export function LoginScreen() {
       <form className={styles.card} onSubmit={onSubmit}>
         <div className={styles.brand}>
           <BrandMark className={styles.symbol} />
-          <div>
-            <strong>помним</strong>
-            <span className={styles.caption}>Админка владельца</span>
-          </div>
+          <strong>помним</strong>
         </div>
         <h1>Вход</h1>
-        <p className={styles.lead}>Сюда входите только вы.</p>
         <label htmlFor="login">Логин</label>
         <input id="login" value={login} autoComplete="username" onChange={(event) => setLogin(event.target.value)} required />
         <label htmlFor="password">Пароль</label>
