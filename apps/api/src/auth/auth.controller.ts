@@ -25,7 +25,11 @@ export class AuthController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie('pomnim_admin', { path: '/' })
+    response.clearCookie('pomnim_admin', {
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.COOKIE_SECURE === 'true',
+    })
     return { ok: true }
   }
 

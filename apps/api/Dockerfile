@@ -5,7 +5,8 @@ COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/shared/package.json packages/shared/package.json
-RUN npm ci
+COPY apps/mobile/package.json apps/mobile/package.json
+RUN npm ci --workspace @pomnim/api --include-workspace-root --no-audit --no-fund
 COPY packages/shared packages/shared
 COPY apps/api apps/api
 RUN npm run build --workspace @pomnim/shared \
