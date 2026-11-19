@@ -1,4 +1,5 @@
 import { BrandMark } from './admin/brand-mark'
+import { HomeArt } from './home-art'
 import styles from './home.module.css'
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
           Семья описывает, что нужно сделать. Исполнитель предлагает объём и сумму. После работы присылает фото.
         </p>
       </div>
+      <HomeArt />
     </main>
   )
 }
