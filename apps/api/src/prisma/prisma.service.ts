@@ -9,10 +9,16 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const login = process.env.ADMIN_LOGIN?.trim()
     const password = process.env.ADMIN_PASSWORD
     if (!login || !password) throw new Error('Нужны ADMIN_LOGIN и ADMIN_PASSWORD')
+    const passwordHash = await bcrypt.hash(password, 10)
     const existing = await this.owner.findUnique({ where: { login } })
-    if (existing) return
+    if (existing) {
+      if (!(await bcrypt.compare(password, existing.passwordHash))) {
+        await this.owner.update({ where: { login }, data: { passwordHash } })
+      }
+      return
+    }
     await this.owner.create({
-      data: { login, passwordHash: await bcrypt.hash(password, 10) },
+      data: { login, passwordHash },
     })
   }
 }
