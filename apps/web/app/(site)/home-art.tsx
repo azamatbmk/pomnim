@@ -1,8 +1,10 @@
-import styles from './home.module.css'
+type HomeArtProps = {
+  className?: string
+}
 
-export function HomeArt() {
+export function HomeArt({ className }: HomeArtProps) {
   return (
-    <svg className={styles.art} viewBox="0 0 560 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 560 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true" strokeLinecap="round" strokeLinejoin="round">
       <defs>
         <linearGradient id="home-fade" x1="0" x2="1">
           <stop offset="0" stopColor="#e8ecdf" stopOpacity="0" />
