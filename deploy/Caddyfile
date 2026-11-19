@@ -1,11 +1,11 @@
-www.pominm.site {
-	redir https://pominm.site{uri} permanent
+www.pomnim.site {
+	redir https://pomnim.site{uri} permanent
 }
 
-pominm.site {
+pomnim.site {
 	reverse_proxy web:3000
 }
 
-api.pominm.site {
+api.pomnim.site {
 	reverse_proxy api:3001
 }
