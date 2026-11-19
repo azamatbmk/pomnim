@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import styles from './site.module.css'
 
-export type IconName = 'home' | 'grid' | 'people' | 'help' | 'pin' | 'arrow' | 'leaf' | 'paint' | 'flower' | 'camera' | 'check' | 'list'
+export type IconName = 'home' | 'grid' | 'help' | 'pin' | 'arrow' | 'leaf' | 'paint' | 'flower' | 'camera' | 'check' | 'list'
 
 const paths: Record<IconName, ReactNode> = {
   home: <path d="m3 10 9-7 9 7v10H3Z M9 20v-7h6v7" />,
@@ -11,12 +11,6 @@ const paths: Record<IconName, ReactNode> = {
       <rect x="14" y="3" width="7" height="7" rx="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1.5" />
       <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </>
-  ),
-  people: (
-    <>
-      <circle cx="9" cy="8" r="3" />
-      <path d="M2 21v-3a7 7 0 0 1 14 0v3M16 4a3 3 0 0 1 0 6M19 13a6 6 0 0 1 3 5v3" />
     </>
   ),
   help: (

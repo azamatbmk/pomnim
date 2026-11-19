@@ -10,7 +10,6 @@ import styles from './site.module.css'
 const links: { href: string; label: string; icon: IconName }[] = [
   { href: '/', label: 'Главная', icon: 'home' },
   { href: '/services', label: 'Услуги', icon: 'grid' },
-  { href: '/people', label: 'Исполнители', icon: 'people' },
   { href: '/help', label: 'Как это работает', icon: 'help' },
 ]
 

@@ -88,7 +88,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <p className={styles.disclaimer}>Цены и профили на сайте — примеры. Стоимость называет исполнитель, когда видит задачу.</p>
+      <p className={styles.disclaimer}>Цены на сайте — примеры. Стоимость называет исполнитель, когда видит задачу.</p>
     </>
   )
 }
