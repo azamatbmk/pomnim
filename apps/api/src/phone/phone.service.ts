@@ -36,7 +36,7 @@ export class PhoneService {
       const code = this.generateCode()
       await this.saveCode(phone, code)
       try {
-        await this.smsAero.send(phone, `Код входа в помним: ${code}`)
+        await this.smsAero.send(phone, `Код входа «Помним»: ${code}`)
       } catch (error) {
         await this.prisma.phoneCode.deleteMany({ where: { phone } })
         throw error
