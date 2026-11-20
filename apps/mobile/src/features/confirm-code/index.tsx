@@ -1,11 +1,13 @@
-import type { AppSession } from '@pomnim/shared'
+import { authCodeLength, type AppSession, type AuthPhoneResponse } from '@pomnim/shared'
 import { useRouter } from 'expo-router'
-import { useRef, useState, type ComponentRef } from 'react'
+import { useEffect, useRef, useState, type ComponentRef } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { useSession } from '../../entities/session'
 import { api, ApiError } from '../../shared/api/client'
 import { Button } from '../../shared/ui/button'
 import { sans, serif, theme } from '../../shared/ui/theme'
+
+const resendCooldownSec = 60
 
 type CodeFormProps = {
   phone: string
@@ -20,9 +22,16 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [pending, setPending] = useState(false)
+  const [cooldown, setCooldown] = useState(resendCooldownSec)
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setTimeout(() => setCooldown((value) => value - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
 
   async function submit() {
-    if (code.length < 4 || pending) return
+    if (code.length < authCodeLength || pending) return
     setPending(true)
     setError('')
     try {
@@ -40,16 +49,20 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
   }
 
   async function resend() {
-    if (pending) return
+    if (pending || cooldown > 0) return
     setPending(true)
     setError('')
+    setNotice('')
+    setCode('')
     try {
-      const result = await api<{ devCode?: string }>('/api/auth/phone', {
+      const result = await api<AuthPhoneResponse>('/api/auth/phone', {
         method: 'POST',
         body: { phone },
       })
       if (result.devCode) router.setParams({ dev: result.devCode })
+      else router.setParams({ dev: undefined })
       setNotice('Новый код отправлен')
+      setCooldown(resendCooldownSec)
     } catch (caught) {
       setError(caught instanceof ApiError ? caught.message : 'Не получилось')
     } finally {
@@ -57,10 +70,13 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
     }
   }
 
+  const resendLabel =
+    cooldown > 0 ? `Повтор через ${cooldown} сек.` : notice || 'Отправить код ещё раз'
+
   return (
     <View style={styles.card}>
       <View style={styles.boxes}>
-        {[0, 1, 2, 3].map((index) => (
+        {Array.from({ length: authCodeLength }, (_, index) => (
           <View key={index} pointerEvents="none" style={styles.box}>
             <Text style={styles.digit}>{code[index] ?? ''}</Text>
           </View>
@@ -68,22 +84,26 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
         <TextInput
           ref={input}
           value={code}
-          onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, 4))}
+          onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, authCodeLength))}
           keyboardType="number-pad"
           inputMode="numeric"
           autoComplete="sms-otp"
           textContentType="oneTimeCode"
-          maxLength={4}
+          maxLength={authCodeLength}
           autoFocus
           caretHidden
           underlineColorAndroid="transparent"
           style={styles.catcher}
         />
       </View>
-      <Button label={pending ? 'Проверяем' : 'Подтвердить'} onPress={submit} disabled={code.length < 4 || pending} />
+      <Button
+        label={pending ? 'Проверяем' : 'Подтвердить'}
+        onPress={submit}
+        disabled={code.length < authCodeLength || pending}
+      />
       {devCode ? <Text style={styles.help}>Для проверки на этом компьютере код {devCode}</Text> : null}
-      <Pressable onPress={resend} disabled={pending}>
-        <Text style={styles.link}>{notice || 'Отправить код ещё раз'}</Text>
+      <Pressable onPress={resend} disabled={pending || cooldown > 0}>
+        <Text style={[styles.link, cooldown > 0 ? styles.linkMuted : null]}>{resendLabel}</Text>
       </Pressable>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -102,7 +122,7 @@ const styles = StyleSheet.create({
   boxes: {
     position: 'relative',
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
   },
   box: {
     flex: 1,
@@ -115,7 +135,7 @@ const styles = StyleSheet.create({
   },
   digit: {
     fontFamily: serif,
-    fontSize: 24,
+    fontSize: 22,
     color: theme.ink,
   },
   catcher: {
@@ -139,6 +159,9 @@ const styles = StyleSheet.create({
     fontFamily: sans,
     fontSize: 12,
     color: theme.green,
+  },
+  linkMuted: {
+    color: theme.muted,
   },
   error: {
     marginTop: 8,

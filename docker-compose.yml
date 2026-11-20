@@ -25,8 +25,12 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
       JWT_SECRET: ${JWT_SECRET:-change-me-too}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      SMS_AERO_EMAIL: ${SMS_AERO_EMAIL:-}
+      SMS_AERO_API_KEY: ${SMS_AERO_API_KEY:-}
+      SMS_AERO_SIGN: ${SMS_AERO_SIGN:-SMS Aero}
+      SMS_DEV_CODE: ${SMS_DEV_CODE:-123456}
       PORT: 3001
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV:-development}
     ports:
       - "3001:3001"
     depends_on:

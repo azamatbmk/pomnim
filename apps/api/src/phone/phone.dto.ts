@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator'
+import { IsString, Matches, MaxLength, MinLength } from 'class-validator'
 
 export class PhoneDto {
   @IsString()
@@ -9,8 +9,7 @@ export class PhoneDto {
 
 export class VerifyCodeDto extends PhoneDto {
   @IsString()
-  @MinLength(4, { message: 'Введите четыре цифры' })
-  @MaxLength(4, { message: 'Введите четыре цифры' })
+  @Matches(/^\d{6}$/, { message: 'Введите шесть цифр' })
   code!: string
 }
 

@@ -1,4 +1,4 @@
-import { normalizePhone } from '@pomnim/shared'
+import { normalizePhone, type AuthPhoneResponse } from '@pomnim/shared'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
@@ -32,7 +32,7 @@ export function PhoneForm() {
     setPending(true)
     setError('')
     try {
-      const result = await api<{ phone: string; devCode?: string }>('/api/auth/phone', {
+      const result = await api<AuthPhoneResponse>('/api/auth/phone', {
         method: 'POST',
         body: { phone },
       })

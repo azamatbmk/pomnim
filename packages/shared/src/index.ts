@@ -102,6 +102,13 @@ export type AppSession = {
   needsName: boolean
 }
 
+export type AuthPhoneResponse = {
+  phone: string
+  devCode?: string
+}
+
+export const authCodeLength = 6
+
 export type Worker = {
   id: string
   name: string
@@ -113,11 +120,15 @@ export type Worker = {
 
 export function normalizePhone(input: string): string | null {
   const digits = input.replace(/\D/g, '')
+  let national: string | null = null
   if (digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'))) {
-    return '+7' + digits.slice(1)
+    national = digits.slice(1)
+  } else if (digits.length === 10) {
+    national = digits
   }
-  if (digits.length === 10) return '+7' + digits
-  return null
+  // Только мобильные РФ (+79…): SMS-вход на городские номера бессмысленен
+  if (!national || !/^9\d{9}$/.test(national)) return null
+  return `+7${national}`
 }
 
 export function formatPhone(phone: string): string {

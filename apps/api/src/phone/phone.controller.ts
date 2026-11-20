@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 import type { AppToken } from './app-auth.guard'
 import { AppAuthGuard } from './app-auth.guard'
 import { PhoneDto, SetNameDto, VerifyCodeDto } from './phone.dto'
@@ -9,11 +10,13 @@ export class PhoneController {
   constructor(private readonly phone: PhoneService) {}
 
   @Post('phone')
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
   requestCode(@Body() body: PhoneDto) {
     return this.phone.requestCode(body.phone)
   }
 
   @Post('verify')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   verify(@Body() body: VerifyCodeDto) {
     return this.phone.verify(body.phone, body.code)
   }

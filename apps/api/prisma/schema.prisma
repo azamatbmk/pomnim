@@ -100,10 +100,9 @@ model Service {
 
 model PhoneCode {
   id        String   @id @default(cuid())
-  phone     String
+  phone     String   @unique
   code      String
+  attempts  Int      @default(0)
   expiresAt DateTime
   createdAt DateTime @default(now())
-
-  @@index([phone])
 }

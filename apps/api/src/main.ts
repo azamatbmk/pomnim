@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import cookieParser from 'cookie-parser'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
   if (!process.env.JWT_SECRET) throw new Error('Нужен JWT_SECRET')
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  app.set('trust proxy', 1)
   app.setGlobalPrefix('api')
   app.use(cookieParser())
   const webOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:3000'

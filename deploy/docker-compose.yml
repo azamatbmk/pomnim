@@ -25,6 +25,9 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?}
       JWT_SECRET: ${JWT_SECRET:?}
       WEB_ORIGIN: ${WEB_ORIGIN:?}
+      SMS_AERO_EMAIL: ${SMS_AERO_EMAIL:?}
+      SMS_AERO_API_KEY: ${SMS_AERO_API_KEY:?}
+      SMS_AERO_SIGN: ${SMS_AERO_SIGN:-SMS Aero}
       COOKIE_SECURE: "true"
       PORT: 3001
       NODE_ENV: production
