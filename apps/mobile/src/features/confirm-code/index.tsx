@@ -1,4 +1,4 @@
-import { authCodeLength, type AppSession, type AuthPhoneResponse } from '@pomnim/shared'
+import { authCodeLength, authResendCooldownSec, type AppSession, type AuthPhoneResponse } from '@pomnim/shared'
 import { useRouter } from 'expo-router'
 import { useEffect, useRef, useState, type ComponentRef } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
@@ -6,8 +6,6 @@ import { useSession } from '../../entities/session'
 import { api, ApiError } from '../../shared/api/client'
 import { Button } from '../../shared/ui/button'
 import { sans, serif, theme } from '../../shared/ui/theme'
-
-const resendCooldownSec = 60
 
 type CodeFormProps = {
   phone: string
@@ -22,7 +20,7 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [pending, setPending] = useState(false)
-  const [cooldown, setCooldown] = useState(resendCooldownSec)
+  const [cooldown, setCooldown] = useState(authResendCooldownSec)
 
   useEffect(() => {
     if (cooldown <= 0) return
@@ -59,12 +57,18 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
         method: 'POST',
         body: { phone },
       })
-      if (result.devCode) router.setParams({ dev: result.devCode })
+      if (__DEV__ && result.devCode) router.setParams({ dev: result.devCode })
       else router.setParams({ dev: undefined })
       setNotice('Новый код отправлен')
-      setCooldown(resendCooldownSec)
+      setCooldown(authResendCooldownSec)
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : 'Не получилось')
+      if (caught instanceof ApiError) {
+        const match = /Подождите (\d+) сек/.exec(caught.message)
+        if (match) setCooldown(Number(match[1]))
+        setError(caught.message)
+      } else {
+        setError('Не получилось')
+      }
     } finally {
       setPending(false)
     }
@@ -92,6 +96,7 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
           maxLength={authCodeLength}
           autoFocus
           caretHidden
+          accessibilityLabel="Код из СМС"
           underlineColorAndroid="transparent"
           style={styles.catcher}
         />
@@ -101,7 +106,7 @@ export function CodeForm({ phone, devCode }: CodeFormProps) {
         onPress={submit}
         disabled={code.length < authCodeLength || pending}
       />
-      {devCode ? <Text style={styles.help}>Для проверки на этом компьютере код {devCode}</Text> : null}
+      {__DEV__ && devCode ? <Text style={styles.help}>Для проверки на этом компьютере код {devCode}</Text> : null}
       <Pressable onPress={resend} disabled={pending || cooldown > 0}>
         <Text style={[styles.link, cooldown > 0 ? styles.linkMuted : null]}>{resendLabel}</Text>
       </Pressable>

@@ -28,8 +28,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:preview": "npx eas-cli build --profile preview --platform all",
-    "build:production": "npx eas-cli build --profile production --platform all",
-    "submit": "npx eas-cli submit --profile production --platform all"
+    "eas-build-post-install": "cd ../.. && npm run build --workspace @pomnim/shared",
+    "build:preview": "npx eas-cli build --profile preview --platform android",
+    "build:production": "npx eas-cli build --profile production --platform android",
+    "submit": "npx eas-cli submit --profile production --platform android"
   }
 }

@@ -1,3 +1,4 @@
+import { authCodeLength } from '@pomnim/shared'
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator'
 
 export class PhoneDto {
@@ -9,7 +10,7 @@ export class PhoneDto {
 
 export class VerifyCodeDto extends PhoneDto {
   @IsString()
-  @Matches(/^\d{6}$/, { message: 'Введите шесть цифр' })
+  @Matches(new RegExp(`^\\d{${authCodeLength}}$`), { message: `Введите ${authCodeLength} цифр` })
   code!: string
 }
 

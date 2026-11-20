@@ -2,8 +2,14 @@ node_modules
 dist
 .next
 .env
-.env.local
+.env.*
+!.env.example
+!.env.example.*
 *.tsbuildinfo
 apps/api/dist
 packages/shared/dist
-screens/
+# HTML-макеты в корне репо (не apps/mobile/src/screens)
+/screens/
+apps/mobile/eas-build.log*
+apps/mobile/eas-build.txt
+apps/mobile/build-view.json

@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 import type { Response } from 'express'
 import { AuthService } from './auth.service'
 import { LoginDto } from './login.dto'
@@ -11,6 +12,7 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Post('login')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async login(@Body() body: LoginDto, @Res({ passthrough: true }) response: Response) {
     const token = await this.auth.login(body.login, body.password)
     response.cookie('pomnim_admin', token, {

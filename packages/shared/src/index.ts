@@ -108,6 +108,7 @@ export type AuthPhoneResponse = {
 }
 
 export const authCodeLength = 6
+export const authResendCooldownSec = 60
 
 export type Worker = {
   id: string

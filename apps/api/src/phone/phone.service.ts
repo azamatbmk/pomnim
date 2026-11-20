@@ -10,12 +10,20 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { authCodeLength, formatPhone, normalizePhone, type AppRole, type AppSession, type AuthPhoneResponse } from '@pomnim/shared'
+import {
+  authCodeLength,
+  authResendCooldownSec,
+  formatPhone,
+  normalizePhone,
+  type AppRole,
+  type AppSession,
+  type AuthPhoneResponse,
+} from '@pomnim/shared'
 import { PrismaService } from '../prisma/prisma.service'
 import { SmsAeroService } from './sms-aero.service'
 
 const codeTtlMs = 5 * 60 * 1000
-const resendCooldownMs = 60 * 1000
+const resendCooldownMs = authResendCooldownSec * 1000
 const maxVerifyAttempts = 5
 
 @Injectable()
@@ -29,9 +37,8 @@ export class PhoneService {
 
   async requestCode(rawPhone: string): Promise<AuthPhoneResponse> {
     const phone = this.phone(rawPhone)
-    await this.assertResendAllowed(phone)
+    const development = this.config.get<string>('NODE_ENV') === 'development'
 
-    const production = this.config.get<string>('NODE_ENV') === 'production'
     if (this.smsAero.configured()) {
       const code = this.generateCode()
       await this.saveCode(phone, code)
@@ -44,7 +51,7 @@ export class PhoneService {
       return { phone: formatPhone(phone) }
     }
 
-    if (production) {
+    if (!development) {
       throw new ServiceUnavailableException('СМС пока не подключены')
     }
 
@@ -67,12 +74,20 @@ export class PhoneService {
     }
 
     if (!this.codesMatch(record.code, submitted)) {
-      const attempts = record.attempts + 1
+      let attempts: number
+      try {
+        const updated = await this.prisma.phoneCode.update({
+          where: { phone },
+          data: { attempts: { increment: 1 } },
+        })
+        attempts = updated.attempts
+      } catch {
+        throw new UnauthorizedException('Код устарел. Запросите новый.')
+      }
       if (attempts >= maxVerifyAttempts) {
         await this.prisma.phoneCode.delete({ where: { phone } }).catch(() => undefined)
         throw new UnauthorizedException('Слишком много попыток. Запросите новый код.')
       }
-      await this.prisma.phoneCode.update({ where: { phone }, data: { attempts } })
       throw new UnauthorizedException('Неверный код')
     }
 
@@ -117,23 +132,27 @@ export class PhoneService {
     return this.session(customer.id, 'customer', customer.phone, customer.name)
   }
 
-  private async assertResendAllowed(phone: string) {
-    const existing = await this.prisma.phoneCode.findUnique({ where: { phone } })
-    if (!existing) return
-    const waitMs = existing.createdAt.getTime() + resendCooldownMs - Date.now()
-    if (waitMs > 0) {
-      const seconds = Math.ceil(waitMs / 1000)
-      throw new HttpException(`Подождите ${seconds} сек. перед новым кодом`, HttpStatus.TOO_MANY_REQUESTS)
-    }
-  }
-
   private async saveCode(phone: string, code: string) {
     const expiresAt = new Date(Date.now() + codeTtlMs)
-    await this.prisma.phoneCode.upsert({
-      where: { phone },
-      create: { phone, code, expiresAt, attempts: 0 },
-      update: { code, expiresAt, attempts: 0, createdAt: new Date() },
+    const cutoff = new Date(Date.now() - resendCooldownMs)
+
+    const refreshed = await this.prisma.phoneCode.updateMany({
+      where: { phone, createdAt: { lte: cutoff } },
+      data: { code, expiresAt, attempts: 0, createdAt: new Date() },
     })
+    if (refreshed.count === 1) return
+
+    const existing = await this.prisma.phoneCode.findUnique({ where: { phone } })
+    if (existing) {
+      const seconds = Math.max(1, Math.ceil((existing.createdAt.getTime() + resendCooldownMs - Date.now()) / 1000))
+      throw new HttpException(`Подождите ${seconds} сек. перед новым кодом`, HttpStatus.TOO_MANY_REQUESTS)
+    }
+
+    try {
+      await this.prisma.phoneCode.create({ data: { phone, code, expiresAt, attempts: 0 } })
+    } catch {
+      throw new HttpException('Подождите перед новым кодом', HttpStatus.TOO_MANY_REQUESTS)
+    }
   }
 
   private generateCode() {
