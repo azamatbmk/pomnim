@@ -8,6 +8,8 @@ export type Grave = {
   city: string
   cemetery: string
   landmarks: string | null
+  latitude: number | null
+  longitude: number | null
   biography: string | null
   keepOff: string | null
   familyId: string | null
@@ -31,10 +33,17 @@ export type GraveInput = {
   city: string
   cemetery: string
   landmarks: string | null
+  latitude: number | null
+  longitude: number | null
   biography: string | null
   keepOff: string | null
   familyId: string | null
   familyName: string | null
+}
+
+export type MapPoint = {
+  latitude: number
+  longitude: number
 }
 
 export function graveYears(grave: Pick<Grave, 'birthYear' | 'deathYear'>) {
@@ -42,6 +51,16 @@ export function graveYears(grave: Pick<Grave, 'birthYear' | 'deathYear'>) {
   if (grave.birthYear) return String(grave.birthYear)
   if (grave.deathYear) return String(grave.deathYear)
   return ''
+}
+
+export function graveMapPoint(value: { latitude: number | null; longitude: number | null }): MapPoint | null {
+  if (value.latitude == null || value.longitude == null) return null
+  if (!Number.isFinite(value.latitude) || !Number.isFinite(value.longitude)) return null
+  return { latitude: value.latitude, longitude: value.longitude }
+}
+
+export function yandexMapsUrl(point: MapPoint) {
+  return `https://yandex.ru/maps/?pt=${point.longitude},${point.latitude}&z=17&l=map`
 }
 
 export function listGraves(token: string) {

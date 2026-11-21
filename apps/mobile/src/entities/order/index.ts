@@ -9,6 +9,8 @@ export type Order = {
   city: string
   cemetery: string
   landmarks: string | null
+  latitude: number | null
+  longitude: number | null
   service: string
   serviceTitle: string
   details: string | null

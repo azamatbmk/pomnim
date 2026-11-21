@@ -57,6 +57,8 @@ model Grave {
   city       String
   cemetery   String
   landmarks  String?
+  latitude   Float?
+  longitude  Float?
   biography  String?
   keepOff    String?
   createdAt  DateTime @default(now())

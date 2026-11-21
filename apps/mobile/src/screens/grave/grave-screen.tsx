@@ -1,9 +1,9 @@
 import { formatRubles } from '@pomnim/shared'
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { deleteGrave, graveYears, readGrave, type Grave } from '../../entities/grave'
+import { deleteGrave, graveMapPoint, graveYears, readGrave, yandexMapsUrl, type Grave } from '../../entities/grave'
 import { cancelOrder, listOrders, orderDateLabel, type Order } from '../../entities/order'
 import { useSession } from '../../entities/session'
 import { ApiError } from '../../shared/api/client'
@@ -97,6 +97,7 @@ export function GraveScreen() {
   }
 
   const years = grave ? graveYears(grave) : ''
+  const mapPoint = grave ? graveMapPoint(grave) : null
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
@@ -114,6 +115,17 @@ export function GraveScreen() {
               {grave.city} · {grave.cemetery}
             </Text>
             {grave.familyName ? <Note label="Семья" text={grave.familyName} /> : null}
+            {mapPoint ? (
+              <Pressable
+                accessibilityRole="link"
+                onPress={() => {
+                  void Linking.openURL(yandexMapsUrl(mapPoint)).catch(() => undefined)
+                }}
+                style={styles.mapLink}
+              >
+                <Text style={styles.mapLinkText}>Открыть на Яндекс.Картах</Text>
+              </Pressable>
+            ) : null}
             {grave.landmarks ? <Note label="Как найти" text={grave.landmarks} /> : null}
             {grave.biography ? <Note label="Биография" text={grave.biography} /> : null}
             {grave.keepOff ? <Note label="Что нельзя трогать" text={grave.keepOff} /> : null}
@@ -204,6 +216,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: theme.ink,
+  },
+  mapLink: {
+    alignSelf: 'flex-start',
+    marginTop: 12,
+  },
+  mapLinkText: {
+    fontFamily: sans,
+    fontSize: 13,
+    color: theme.green,
   },
   note: {
     marginTop: 18,

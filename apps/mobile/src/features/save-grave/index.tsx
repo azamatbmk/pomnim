@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import type { FamilyOption, Grave, GraveInput } from '../../entities/grave'
+import { graveMapPoint, type FamilyOption, type Grave, type GraveInput, type MapPoint } from '../../entities/grave'
+import { PickGravePoint } from './map-picker'
 import { Button } from '../../shared/ui/button'
 import { sans, theme } from '../../shared/ui/theme'
 
@@ -28,6 +29,8 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
   const [city, setCity] = useState(initial?.city ?? '')
   const [cemetery, setCemetery] = useState(initial?.cemetery ?? '')
   const [landmarks, setLandmarks] = useState(initial?.landmarks ?? '')
+  const [point, setPoint] = useState<MapPoint | null>(initial ? graveMapPoint(initial) : null)
+  const [mapOpen, setMapOpen] = useState(false)
   const [biography, setBiography] = useState(initial?.biography ?? '')
   const [keepOff, setKeepOff] = useState(initial?.keepOff ?? '')
   const [choice, setChoice] = useState<FamilyChoice>(initial?.familyId ? 'have' : 'none')
@@ -81,6 +84,8 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
       city: city.trim(),
       cemetery: cemetery.trim(),
       landmarks: landmarks.trim() || null,
+      latitude: point?.latitude ?? null,
+      longitude: point?.longitude ?? null,
       biography: biography.trim() || null,
       keepOff: keepOff.trim() || null,
       familyId: choice === 'have' ? familyId : null,
@@ -105,6 +110,38 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
       <Text style={styles.section}>Место</Text>
       <Field label="Населённый пункт" value={city} onChangeText={edit(setCity)} placeholder="Владикавказ" maxLength={80} />
       <Field label="Кладбище" value={cemetery} onChangeText={edit(setCemetery)} placeholder="Городское кладбище" maxLength={120} />
+      <View style={styles.mapBlock}>
+        <Text style={styles.label}>На карте</Text>
+        <Text style={styles.helpInline}>
+          {point
+            ? `${point.latitude.toFixed(5)}, ${point.longitude.toFixed(5)}`
+            : 'Необязательно, но так исполнителю проще найти участок'}
+        </Text>
+        <View style={styles.mapActions}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              touch()
+              setMapOpen(true)
+            }}
+            style={styles.mapButton}
+          >
+            <Text style={styles.mapButtonText}>{point ? 'Изменить точку' : 'Указать на карте'}</Text>
+          </Pressable>
+          {point ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                touch()
+                setPoint(null)
+              }}
+              style={styles.mapClear}
+            >
+              <Text style={styles.mapClearText}>Убрать</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
       <Field
         label="Ориентиры"
         value={landmarks}
@@ -153,6 +190,16 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
 
       <Button label={pending ? 'Сохраняем' : 'Сохранить'} onPress={submit} disabled={!ready || pending} />
       {localError || error ? <Text style={styles.error}>{localError || error}</Text> : null}
+
+      <PickGravePoint
+        visible={mapOpen}
+        initial={point}
+        onClose={() => setMapOpen(false)}
+        onPick={(next) => {
+          touch()
+          setPoint(next)
+        }}
+      />
     </View>
   )
 }
@@ -252,6 +299,45 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 18,
     color: theme.help,
+  },
+  helpInline: {
+    marginTop: -2,
+    marginBottom: 10,
+    fontFamily: sans,
+    fontSize: 11,
+    lineHeight: 18,
+    color: theme.help,
+  },
+  mapBlock: {
+    marginBottom: 12,
+  },
+  mapActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    alignItems: 'center',
+  },
+  mapButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: theme.green,
+    borderRadius: 8,
+    backgroundColor: '#eef2e7',
+  },
+  mapButtonText: {
+    fontFamily: sans,
+    fontSize: 13,
+    color: theme.green,
+  },
+  mapClear: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  mapClearText: {
+    fontFamily: sans,
+    fontSize: 13,
+    color: theme.muted,
   },
   choices: {
     flexDirection: 'row',

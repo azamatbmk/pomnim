@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min, MinLength } from 'class-validator'
+import { IsInt, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateIf } from 'class-validator'
 
 export class SaveGraveDto {
   @IsString()
@@ -32,6 +32,24 @@ export class SaveGraveDto {
   @IsString()
   @MaxLength(800, { message: 'Ориентиры слишком длинные' })
   landmarks?: string | null
+
+  @ValidateIf((_, value) => value !== null && value !== undefined)
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false, maxDecimalPlaces: 7 },
+    { message: 'Укажите точку на карте' },
+  )
+  @Min(-90, { message: 'Некорректная широта' })
+  @Max(90, { message: 'Некорректная широта' })
+  latitude?: number | null
+
+  @ValidateIf((_, value) => value !== null && value !== undefined)
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false, maxDecimalPlaces: 7 },
+    { message: 'Укажите точку на карте' },
+  )
+  @Min(-180, { message: 'Некорректная долгота' })
+  @Max(180, { message: 'Некорректная долгота' })
+  longitude?: number | null
 
   @IsOptional()
   @IsString()

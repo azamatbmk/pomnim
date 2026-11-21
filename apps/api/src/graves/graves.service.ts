@@ -14,6 +14,8 @@ type GraveRow = {
   city: string
   cemetery: string
   landmarks: string | null
+  latitude: number | null
+  longitude: number | null
   biography: string | null
   keepOff: string | null
   familyId: string | null
@@ -25,6 +27,15 @@ function blank(value?: string | null) {
   return trimmed.length > 0 ? trimmed : null
 }
 
+function mapPoint(latitude?: number | null, longitude?: number | null) {
+  // Поля не прислали — не трогаем сохранённую точку (старые клиенты / частичный PATCH)
+  if (latitude === undefined && longitude === undefined) return {}
+  const hasLat = latitude != null
+  const hasLng = longitude != null
+  if (hasLat !== hasLng) throw new BadRequestException('Укажите точку на карте целиком')
+  return { latitude: latitude ?? null, longitude: longitude ?? null }
+}
+
 function toGrave(row: GraveRow) {
   return {
     id: row.id,
@@ -34,6 +45,8 @@ function toGrave(row: GraveRow) {
     city: row.city,
     cemetery: row.cemetery,
     landmarks: row.landmarks,
+    latitude: row.latitude,
+    longitude: row.longitude,
     biography: row.biography,
     keepOff: row.keepOff,
     familyId: row.familyId,
@@ -155,6 +168,7 @@ export class GravesService {
       city,
       cemetery,
       landmarks: blank(input.landmarks),
+      ...mapPoint(input.latitude, input.longitude),
       biography: blank(input.biography),
       keepOff: blank(input.keepOff),
       familyId: await this.familyId(tx, customerId, input),

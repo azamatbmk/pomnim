@@ -5,7 +5,15 @@ import type { AppToken } from '../phone/app-auth.guard'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateOrderDto } from './create-order.dto'
 
-const graveFields = { id: true, fullName: true, city: true, cemetery: true, landmarks: true } as const
+const graveFields = {
+  id: true,
+  fullName: true,
+  city: true,
+  cemetery: true,
+  landmarks: true,
+  latitude: true,
+  longitude: true,
+} as const
 
 type OrderRow = {
   id: string
@@ -22,6 +30,8 @@ type OrderRow = {
     city: string
     cemetery: string
     landmarks: string | null
+    latitude: number | null
+    longitude: number | null
   }
 }
 
@@ -54,6 +64,8 @@ function toOrder(row: OrderRow) {
     city: row.grave.city,
     cemetery: row.grave.cemetery,
     landmarks: row.grave.landmarks,
+    latitude: row.grave.latitude,
+    longitude: row.grave.longitude,
     service: row.service,
     serviceTitle: row.serviceTitle || 'Услуга',
     details: row.details,

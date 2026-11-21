@@ -1,7 +1,8 @@
 import { formatRubles } from '@pomnim/shared'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native'
+import { graveMapPoint, yandexMapsUrl } from '../../entities/grave'
 import { listOrders, orderDateLabel, type Order } from '../../entities/order'
 import { useSession } from '../../entities/session'
 import { ApiError } from '../../shared/api/client'
@@ -64,6 +65,8 @@ function Field({ label, text }: { label: string; text: string }) {
 }
 
 function JobCard({ order }: { order: Order }) {
+  const mapPoint = graveMapPoint(order)
+
   return (
     <View style={styles.card}>
       <Text style={styles.name}>{order.fullName}</Text>
@@ -76,6 +79,17 @@ function JobCard({ order }: { order: Order }) {
       {order.details ? <Text style={styles.details}>{order.details}</Text> : null}
       {order.wishes ? <Field label="Пожелания" text={order.wishes} /> : null}
       {order.landmarks ? <Field label="Как найти" text={order.landmarks} /> : null}
+      {mapPoint ? (
+        <Pressable
+          accessibilityRole="link"
+          onPress={() => {
+            void Linking.openURL(yandexMapsUrl(mapPoint)).catch(() => undefined)
+          }}
+          style={styles.mapLink}
+        >
+          <Text style={styles.mapLinkText}>Открыть на Яндекс.Картах</Text>
+        </Pressable>
+      ) : null}
       <Field label="Желаемая дата" text={orderDateLabel(order.desiredOn)} />
     </View>
   )
@@ -133,6 +147,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: theme.muted,
+  },
+  mapLink: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
+  mapLinkText: {
+    fontFamily: sans,
+    fontSize: 13,
+    color: theme.green,
   },
   error: {
     marginTop: 12,
