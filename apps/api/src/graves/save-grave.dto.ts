@@ -1,3 +1,4 @@
+import { graveYearMax, graveYearMin } from '@pomnim/shared'
 import { IsInt, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateIf } from 'class-validator'
 
 export class SaveGraveDto {
@@ -8,14 +9,14 @@ export class SaveGraveDto {
 
   @IsOptional()
   @IsInt({ message: 'Год рождения — четыре цифры' })
-  @Min(1800, { message: 'Год рождения — четыре цифры' })
-  @Max(2100, { message: 'Год рождения — четыре цифры' })
+  @Min(graveYearMin, { message: 'Год рождения — четыре цифры' })
+  @Max(graveYearMax, { message: 'Год рождения — четыре цифры' })
   birthYear?: number | null
 
   @IsOptional()
   @IsInt({ message: 'Год смерти — четыре цифры' })
-  @Min(1800, { message: 'Год смерти — четыре цифры' })
-  @Max(2100, { message: 'Год смерти — четыре цифры' })
+  @Min(graveYearMin, { message: 'Год смерти — четыре цифры' })
+  @Max(graveYearMax, { message: 'Год смерти — четыре цифры' })
   deathYear?: number | null
 
   @IsString()

@@ -9,11 +9,12 @@ import { sans, serif, theme } from './theme'
 type EntranceScreenProps = {
   heading: ReactNode
   children: ReactNode
+  footer?: ReactNode
 }
 
 const GAP = 8
 
-export function EntranceScreen({ heading, children }: EntranceScreenProps) {
+export function EntranceScreen({ heading, children, footer }: EntranceScreenProps) {
   const [viewport, setViewport] = useState({ width: 0, height: 0 })
   const [header, setHeader] = useState(0)
   const [form, setForm] = useState(0)
@@ -75,6 +76,7 @@ export function EntranceScreen({ heading, children }: EntranceScreenProps) {
                     <View style={styles.stack}>
                       {heading}
                       {children}
+                      {footer}
                     </View>
                   </View>
                 </ScrollView>

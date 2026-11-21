@@ -77,7 +77,7 @@ export function OrderFormScreen({ graveId }: { graveId: string }) {
           automaticallyAdjustKeyboardInsets
         >
           <Pressable accessibilityRole="button" onPress={() => router.back()} style={styles.back}>
-            <Text style={styles.backText}>Могила</Text>
+            <Text style={styles.backText}>Захоронение</Text>
           </Pressable>
           {grave ? <Text style={styles.title}>{grave.fullName}</Text> : null}
           {grave && catalog ? (

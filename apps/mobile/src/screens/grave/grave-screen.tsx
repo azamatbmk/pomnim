@@ -103,7 +103,7 @@ export function GraveScreen() {
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Pressable accessibilityRole="button" onPress={() => router.replace('/graves')} style={styles.back}>
-          <Text style={styles.backText}>Могилы</Text>
+          <Text style={styles.backText}>Захоронения</Text>
         </Pressable>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {ordersNote ? <Text style={styles.error}>{ordersNote}</Text> : null}

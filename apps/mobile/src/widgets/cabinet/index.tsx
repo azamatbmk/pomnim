@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { clearGraveDraft } from '../../entities/grave'
 import { useSession } from '../../entities/session'
 import { BrandMark } from '../../shared/ui/brand-mark'
 import { sans, serif, theme } from '../../shared/ui/theme'
@@ -26,7 +27,15 @@ export function Cabinet({ title, lead, children }: CabinetProps) {
         <Text style={styles.title}>{title}</Text>
         {lead ? <Text style={styles.lead}>{lead}</Text> : null}
         {children}
-        <Pressable onPress={signOut} style={styles.logout}>
+        <Pressable
+          onPress={() => {
+            void (async () => {
+              await clearGraveDraft()
+              await signOut()
+            })()
+          }}
+          style={styles.logout}
+        >
           <Text style={styles.logoutText}>Выйти</Text>
         </Pressable>
       </ScrollView>

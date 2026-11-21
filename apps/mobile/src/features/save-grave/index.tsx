@@ -1,44 +1,117 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import { graveMapPoint, type FamilyOption, type Grave, type GraveInput, type MapPoint } from '../../entities/grave'
+import { graveYearMax, graveYearMin, parseGraveYear } from '@pomnim/shared'
+import {
+  emptyGraveDraft,
+  graveMapPoint,
+  type FamilyOption,
+  type Grave,
+  type GraveFormDraft,
+  type GraveInput,
+  type MapPoint,
+} from '../../entities/grave'
 import { PickGravePoint } from './map-picker'
 import { Button } from '../../shared/ui/button'
 import { sans, theme } from '../../shared/ui/theme'
 
+type FamilyChoice = GraveFormDraft['familyChoice']
+
 type GraveFormProps = {
   families: FamilyOption[]
   initial?: Grave | null
+  draft?: GraveFormDraft | null
   pending?: boolean
   error?: string
+  submitLabel?: string
+  allowExistingFamilies?: boolean
+  footer?: ReactNode
   onChange?: () => void
+  onDraftChange?: (draft: GraveFormDraft) => void
   onSubmit: (input: GraveInput) => void
 }
 
-type FamilyChoice = 'none' | 'have' | 'new'
-
-function yearValue(value: string) {
-  if (!value.trim()) return null
-  if (!/^\d{4}$/.test(value)) return undefined
-  return Number(value)
+function draftFromGrave(grave: Grave, families: FamilyOption[]): GraveFormDraft {
+  return {
+    ...emptyGraveDraft(),
+    fullName: grave.fullName,
+    birthYear: grave.birthYear ? String(grave.birthYear) : '',
+    deathYear: grave.deathYear ? String(grave.deathYear) : '',
+    city: grave.city,
+    cemetery: grave.cemetery,
+    landmarks: grave.landmarks ?? '',
+    latitude: grave.latitude,
+    longitude: grave.longitude,
+    biography: grave.biography ?? '',
+    keepOff: grave.keepOff ?? '',
+    familyChoice: grave.familyId ? 'have' : 'none',
+    familyId: grave.familyId ?? families[0]?.id ?? '',
+    familyName: '',
+    readyForAuth: false,
+  }
 }
 
-export function GraveForm({ families, initial, pending, error, onChange, onSubmit }: GraveFormProps) {
-  const [fullName, setFullName] = useState(initial?.fullName ?? '')
-  const [birthYear, setBirthYear] = useState(initial?.birthYear ? String(initial.birthYear) : '')
-  const [deathYear, setDeathYear] = useState(initial?.deathYear ? String(initial.deathYear) : '')
-  const [city, setCity] = useState(initial?.city ?? '')
-  const [cemetery, setCemetery] = useState(initial?.cemetery ?? '')
-  const [landmarks, setLandmarks] = useState(initial?.landmarks ?? '')
-  const [point, setPoint] = useState<MapPoint | null>(initial ? graveMapPoint(initial) : null)
+export function GraveForm({
+  families,
+  initial,
+  draft,
+  pending,
+  error,
+  submitLabel = 'Сохранить',
+  allowExistingFamilies = true,
+  footer,
+  onChange,
+  onDraftChange,
+  onSubmit,
+}: GraveFormProps) {
+  const seed = draft ?? (initial ? draftFromGrave(initial, families) : emptyGraveDraft())
+  const [fullName, setFullName] = useState(seed.fullName)
+  const [birthYear, setBirthYear] = useState(seed.birthYear)
+  const [deathYear, setDeathYear] = useState(seed.deathYear)
+  const [city, setCity] = useState(seed.city)
+  const [cemetery, setCemetery] = useState(seed.cemetery)
+  const [landmarks, setLandmarks] = useState(seed.landmarks)
+  const [point, setPoint] = useState<MapPoint | null>(graveMapPoint(seed))
   const [mapOpen, setMapOpen] = useState(false)
-  const [biography, setBiography] = useState(initial?.biography ?? '')
-  const [keepOff, setKeepOff] = useState(initial?.keepOff ?? '')
-  const [choice, setChoice] = useState<FamilyChoice>(initial?.familyId ? 'have' : 'none')
-  const [familyId, setFamilyId] = useState(initial?.familyId ?? families[0]?.id ?? '')
-  const [familyName, setFamilyName] = useState('')
+  const [biography, setBiography] = useState(seed.biography)
+  const [keepOff, setKeepOff] = useState(seed.keepOff)
+  const [choice, setChoice] = useState<FamilyChoice>(
+    allowExistingFamilies ? seed.familyChoice : seed.familyChoice === 'have' ? 'none' : seed.familyChoice,
+  )
+  const [familyId, setFamilyId] = useState(seed.familyId || families[0]?.id || '')
+  const [familyName, setFamilyName] = useState(seed.familyName)
   const [localError, setLocalError] = useState('')
-  const familyReady = choice === 'none' || (choice === 'have' && familyId.length > 0) || (choice === 'new' && familyName.trim().length > 0)
+  const familyReady =
+    choice === 'none' || (choice === 'have' && familyId.length > 0) || (choice === 'new' && familyName.trim().length > 0)
   const ready = fullName.trim().length > 0 && city.trim().length > 0 && cemetery.trim().length > 0 && familyReady
+  const onDraftChangeRef = useRef(onDraftChange)
+  useEffect(() => {
+    onDraftChangeRef.current = onDraftChange
+  }, [onDraftChange])
+  const skipFirstDraftEmit = useRef(true)
+
+  useEffect(() => {
+    if (skipFirstDraftEmit.current) {
+      skipFirstDraftEmit.current = false
+      return
+    }
+    onDraftChangeRef.current?.({
+      fullName,
+      birthYear,
+      deathYear,
+      city,
+      cemetery,
+      landmarks,
+      latitude: point?.latitude ?? null,
+      longitude: point?.longitude ?? null,
+      biography,
+      keepOff,
+      familyChoice: choice,
+      familyId,
+      familyName,
+      readyForAuth: false,
+      savedAt: Date.now(),
+    })
+  }, [fullName, birthYear, deathYear, city, cemetery, landmarks, point, biography, keepOff, choice, familyId, familyName])
 
   function touch() {
     setLocalError('')
@@ -58,10 +131,10 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
   }
 
   function submit() {
-    const birth = yearValue(birthYear)
-    const death = yearValue(deathYear)
+    const birth = parseGraveYear(birthYear)
+    const death = parseGraveYear(deathYear)
     if (birth === undefined || death === undefined) {
-      setLocalError('Год — четыре цифры')
+      setLocalError(`Год — четыре цифры от ${graveYearMin} до ${graveYearMax}`)
       return
     }
     if (birth != null && death != null && death < birth) {
@@ -84,8 +157,8 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
       city: city.trim(),
       cemetery: cemetery.trim(),
       landmarks: landmarks.trim() || null,
-      latitude: point?.latitude ?? null,
-      longitude: point?.longitude ?? null,
+      latitude: point ? point.latitude : null,
+      longitude: point ? point.longitude : null,
       biography: biography.trim() || null,
       keepOff: keepOff.trim() || null,
       familyId: choice === 'have' ? familyId : null,
@@ -154,7 +227,9 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
       <Text style={styles.section}>Семья</Text>
       <View style={styles.choices}>
         <Choice label="Не связывать" selected={choice === 'none'} onPress={() => choose('none')} />
-        {families.length > 0 ? <Choice label="Уже есть" selected={choice === 'have'} onPress={() => choose('have')} /> : null}
+        {allowExistingFamilies && families.length > 0 ? (
+          <Choice label="Уже есть" selected={choice === 'have'} onPress={() => choose('have')} />
+        ) : null}
         <Choice label="Новая семья" selected={choice === 'new'} onPress={() => choose('new')} />
       </View>
       {choice === 'have' ? (
@@ -173,7 +248,7 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
         </View>
       ) : null}
       {choice === 'new' ? (
-        <Field label="Название семьи" value={familyName} onChangeText={edit(setFamilyName)} placeholder="Семья Хугаевых" maxLength={60} />
+        <Field label="Название семьи" value={familyName} onChangeText={edit(setFamilyName)} placeholder="Фамилия" maxLength={60} />
       ) : null}
 
       <Text style={styles.section}>Если хотите</Text>
@@ -188,7 +263,8 @@ export function GraveForm({ families, initial, pending, error, onChange, onSubmi
         multiline
       />
 
-      <Button label={pending ? 'Сохраняем' : 'Сохранить'} onPress={submit} disabled={!ready || pending} />
+      <Button label={pending ? 'Сохраняем' : submitLabel} onPress={submit} disabled={!ready || pending} />
+      {footer}
       {localError || error ? <Text style={styles.error}>{localError || error}</Text> : null}
 
       <PickGravePoint

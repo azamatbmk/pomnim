@@ -110,6 +110,21 @@ export type AuthPhoneResponse = {
 export const authCodeLength = 6
 export const authResendCooldownSec = 60
 
+export const graveYearMin = 1800
+export const graveYearMax = 2100
+
+export function parseGraveYear(value: string): number | null | undefined {
+  if (!value.trim()) return null
+  if (!/^\d{4}$/.test(value)) return undefined
+  const year = Number(value)
+  if (year < graveYearMin || year > graveYearMax) return undefined
+  return year
+}
+
+export function roundMapCoord(value: number) {
+  return Math.round(value * 1e6) / 1e6
+}
+
 export type Worker = {
   id: string
   name: string

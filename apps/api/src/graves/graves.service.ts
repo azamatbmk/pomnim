@@ -1,4 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
+import { roundMapCoord } from '@pomnim/shared'
 import { Prisma } from '@prisma/client'
 import type { AppToken } from '../phone/app-auth.guard'
 import { PrismaService } from '../prisma/prisma.service'
@@ -33,7 +34,8 @@ function mapPoint(latitude?: number | null, longitude?: number | null) {
   const hasLat = latitude != null
   const hasLng = longitude != null
   if (hasLat !== hasLng) throw new BadRequestException('Укажите точку на карте целиком')
-  return { latitude: latitude ?? null, longitude: longitude ?? null }
+  if (latitude == null || longitude == null) return { latitude: null, longitude: null }
+  return { latitude: roundMapCoord(latitude), longitude: roundMapCoord(longitude) }
 }
 
 function toGrave(row: GraveRow) {
@@ -135,7 +137,7 @@ export class GravesService {
   }
 
   private customerId(user: AppToken) {
-    if (user.role !== 'customer') throw new ForbiddenException('Карточки могил видит только семья')
+    if (user.role !== 'customer') throw new ForbiddenException('Карточки захоронений видит только семья')
     return user.sub
   }
 

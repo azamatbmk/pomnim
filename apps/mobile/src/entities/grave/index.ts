@@ -1,50 +1,17 @@
+import { roundMapCoord } from '@pomnim/shared'
 import { api } from '../../shared/api/client'
+import type { Grave, GraveInput, GraveList, MapPoint } from './types'
 
-export type Grave = {
-  id: string
-  fullName: string
-  birthYear: number | null
-  deathYear: number | null
-  city: string
-  cemetery: string
-  landmarks: string | null
-  latitude: number | null
-  longitude: number | null
-  biography: string | null
-  keepOff: string | null
-  familyId: string | null
-  familyName: string | null
-}
-
-export type FamilyOption = {
-  id: string
-  name: string
-}
-
-export type GraveList = {
-  families: FamilyOption[]
-  graves: Grave[]
-}
-
-export type GraveInput = {
-  fullName: string
-  birthYear: number | null
-  deathYear: number | null
-  city: string
-  cemetery: string
-  landmarks: string | null
-  latitude: number | null
-  longitude: number | null
-  biography: string | null
-  keepOff: string | null
-  familyId: string | null
-  familyName: string | null
-}
-
-export type MapPoint = {
-  latitude: number
-  longitude: number
-}
+export type { FamilyOption, Grave, GraveInput, GraveList, MapPoint } from './types'
+export {
+  clearGraveDraft,
+  draftHasContent,
+  draftToGraveInput,
+  emptyGraveDraft,
+  readGraveDraft,
+  writeGraveDraft,
+  type GraveFormDraft,
+} from './draft'
 
 export function graveYears(grave: Pick<Grave, 'birthYear' | 'deathYear'>) {
   if (grave.birthYear && grave.deathYear) return `${grave.birthYear}–${grave.deathYear}`
@@ -56,7 +23,8 @@ export function graveYears(grave: Pick<Grave, 'birthYear' | 'deathYear'>) {
 export function graveMapPoint(value: { latitude: number | null; longitude: number | null }): MapPoint | null {
   if (value.latitude == null || value.longitude == null) return null
   if (!Number.isFinite(value.latitude) || !Number.isFinite(value.longitude)) return null
-  return { latitude: value.latitude, longitude: value.longitude }
+  if (value.latitude < -90 || value.latitude > 90 || value.longitude < -180 || value.longitude > 180) return null
+  return { latitude: roundMapCoord(value.latitude), longitude: roundMapCoord(value.longitude) }
 }
 
 export function yandexMapsUrl(point: MapPoint) {

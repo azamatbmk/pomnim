@@ -1,3 +1,4 @@
+import { roundMapCoord } from '@pomnim/shared'
 import { useEffect, useMemo, useState } from 'react'
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -80,7 +81,7 @@ function readPoint(raw: string): MapPoint | null {
     if (typeof latitude !== 'number' || typeof longitude !== 'number') return null
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null
     if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return null
-    return { latitude, longitude }
+    return { latitude: roundMapCoord(latitude), longitude: roundMapCoord(longitude) }
   } catch {
     return null
   }

@@ -25,6 +25,7 @@
       "package": "site.pomnim.app",
       "versionCode": 1,
       "softwareKeyboardLayoutMode": "resize",
+      "allowBackup": false,
       "adaptiveIcon": {
         "backgroundColor": "#f7f7f2",
         "foregroundImage": "./assets/android-icon-foreground.png",
